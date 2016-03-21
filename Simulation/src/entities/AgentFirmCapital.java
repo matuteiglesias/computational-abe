@@ -406,7 +406,7 @@ public class AgentFirmCapital extends AgentFirm {
 	}
 	public float getI(){
 		float response = 0F;
-
+//		Prueba
 		if(this.salesHistory.size() > 0){
 			int index = this.salesHistory.size()-1;
 			response = this.salesHistory.get(index)*parameters.Parameters.AGENT_FIRM_CAPITAL_RD_PROPENSITY;
