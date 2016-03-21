@@ -38,13 +38,13 @@ public class Parameters {
 	public final static float AGENT_GOVERNMENT_UNEMPLOYED_WAGE = 0.4F;
 	
 	public final static int WORLD_WAGE = 30;
-	public final static int CYCLES = 600;
-	public final static int SIMULATIONS = 1;
+	public final static int CYCLES = 500;
+	public final static int SIMULATIONS = 100;
 	
 	// AgentFirmCapital
 	public final static int SEND_BROCHURE = 5;
 
 	
-	public final static boolean PRINT_DEBUG = true;
+	public final static boolean PRINT_DEBUG = false;
 
 }
