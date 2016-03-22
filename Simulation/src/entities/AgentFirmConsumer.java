@@ -182,12 +182,21 @@ public class AgentFirmConsumer extends AgentFirm {
 			this.world.getGovernment().payFirmTax(taxes);
 			//			//logger.info("PAY TAXES");
 		}
+		
+		float salesproy = this.getSalesCycle();
 
 		this.soldUnitsCycle = 0;
 		this.salesCycle = 0;
 		this.costCycle = 0;
 		this.fabricatedCycle = 0;
 	//	this.investmentCycle = 0;
+		
+		float NW = this.getLiquidAssets();
+
+		if(NW + 2 * salesproy < 0){
+			//logger.info("CREANDO FIRM CAPITAL");
+			this.world.replaceConsumerFirm(this);
+		}
 
 	}
 	public void updateMarketShare(){
@@ -590,8 +599,8 @@ public class AgentFirmConsumer extends AgentFirm {
 		for(int i = 0; i < this.machines.size() ; i++){
 			GoodCapital good = this.machines.get(i);
 			int gap = this.world.getCycle() - good.getCycle();
-			int rand = (int) Math.round(StdRandom.gaussian(0, 1 * Parameters.AGENT_FIRM_CONSUMER_OBSOLETE));
-			if(gap >= Parameters.AGENT_FIRM_CONSUMER_OBSOLETE + rand){
+			int rand = (int) Math.round(Math.random() * 1.5 * Parameters.AGENT_FIRM_CONSUMER_OBSOLETE);
+			if(gap >= rand){
 				this.machines.remove(good);
 			}
 		}

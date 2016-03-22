@@ -113,6 +113,10 @@ public class SimulationController {
 			sb.append("Capital_EMP");
 			sb.append(',');
 			sb.append("IPC");
+			sb.append(',');
+			sb.append("Capital bankrupts");
+			sb.append(',');
+			sb.append("Consumer bankrupts");
 			sb.append('\n');
 			pw.write(sb.toString());
 
@@ -153,10 +157,15 @@ public class SimulationController {
 					sb.append(world.capitalEMP());
 					sb.append(',');
 					sb.append(world.ipc());
+					sb.append(',');
+					sb.append(world.getCapitalBankruptHistory().get(i));
+					sb.append(',');
+					sb.append(world.getConsumerBankruptHistory().get(i));
 					sb.append('\n');
 					pw.write(sb.toString());
 
 				}
+				
 
 				logger.info("\n\nPrinting summary SIMMULATION "+j);
 
@@ -180,7 +189,6 @@ public class SimulationController {
 			StringBuilder sbP = new StringBuilder();
 			sbP.append("AGENT_FIRM_CAPITAL="+Parameters.AGENT_FIRM_CAPITAL+"\n");
 			sbP.append("AGENT_FIRM_CAPITAL_NW="+Parameters.AGENT_FIRM_CAPITAL_NW+"\n");
-			sbP.append("AGENT_FIRM_CAPITAL_FRAC_ADELANTO="+Parameters.AGENT_FIRM_CAPITAL_FRAC_ADELANTO+"\n");
 			sbP.append("AGENT_FIRM_CAPITAL_MARGIN="+Parameters.AGENT_FIRM_CAPITAL_MARGIN+"\n");
 			sbP.append("AGENT_FIRM_CAPITAL_RD_PROPENSITY="+Parameters.AGENT_FIRM_CAPITAL_RD_PROPENSITY+"\n");
 			sbP.append("AGENT_FIRM_CAPITAL_FRACTION_X="+Parameters.AGENT_FIRM_CAPITAL_FRACTION_X+"\n");

@@ -51,6 +51,14 @@ public class World {
 	private List<Float> employedHistory = new ArrayList<Float>();
 
 	private List<Float> unemployedHistory = new ArrayList<Float>();
+	
+	private int capitalBankruptCount;
+	
+	private List<Integer> capitalBankruptHistory = new ArrayList<Integer>();
+
+	private int consumerBankruptCount;
+	
+	private List<Integer> consumerBankruptHistory = new ArrayList<Integer>();
 
 	private float competitivityAverageCycle;
 
@@ -72,6 +80,38 @@ public class World {
 
 	public void setFirmAgents(List<AgentFirm> firmAgents) {
 		this.firmAgents = firmAgents;
+	}
+
+	public int getCapitalBankruptCount() {
+		return capitalBankruptCount;
+	}
+
+	public void setCapitalBankruptCount(int capitalBankruptCount) {
+		this.capitalBankruptCount = capitalBankruptCount;
+	}
+
+	public List<Integer> getCapitalBankruptHistory() {
+		return capitalBankruptHistory;
+	}
+
+	public void setCapitalBankruptHistory(List<Integer> capitalBankruptHistory) {
+		this.capitalBankruptHistory = capitalBankruptHistory;
+	}
+
+	public int getConsumerBankruptCount() {
+		return consumerBankruptCount;
+	}
+
+	public void setConsumerBankruptCount(int consumerBankruptCount) {
+		this.consumerBankruptCount = consumerBankruptCount;
+	}
+
+	public List<Integer> getConsumerBankruptHistory() {
+		return consumerBankruptHistory;
+	}
+
+	public void setConsumerBankruptHistory(List<Integer> consumerBankruptHistory) {
+		this.consumerBankruptHistory = consumerBankruptHistory;
 	}
 
 	public List<AgentFirmCapital> getCapitalFirmAgents() {
@@ -286,6 +326,8 @@ public class World {
 
 
 	}
+
+	
 	public WorldCycle runCycle(){
 
 		WorldCycle worldCycle = new WorldCycle();
@@ -438,10 +480,15 @@ public class World {
 		this.unemployedHistory.add((float)(unemployed / (float) this.personAgents.size()));
 
 		// FINAL OPERATIONS
+		this.consumerBankruptHistory.add(this.consumerBankruptCount);
+		this.consumerBankruptCount = 0;
+		this.capitalBankruptHistory.add(this.capitalBankruptCount);
+		this.capitalBankruptCount = 0;
 		this.updateWage();
 		this.worldCycles.add(worldCycle);
 		this.cycle++;
 		return worldCycle;
+		
 	}
 
 	private void updateAverageCompetitivity(){
@@ -619,8 +666,18 @@ public class World {
 		}
 		return acum;
 	}
+	
+	
+	public void addConsumerBankruptCount(){
+		this.consumerBankruptCount++;
+	}
+	
+	public void addCapitalBankruptCount(){
+		this.capitalBankruptCount++;
+	}
 
 	public void replaceConsumerFirm(AgentFirmConsumer consumer){
+		this.addConsumerBankruptCount();
 		consumer.unemployAll();
 		//		int max = this.firmAgents.size() - 1;
 		//		int min = 0;
@@ -641,9 +698,13 @@ public class World {
 			AgentPerson employee = employees.get(0);
 			employee.setEmployer(consumerNew);
 			consumerNew.getEmployees().add(employee);
+			
+			
+			
 		}
 	}
 	public void replaceCapitalFirm(AgentFirmCapital capital){
+		this.addCapitalBankruptCount();
 		capital.unemployAll();
 
 		int max = this.capitalFirmAgents.size() - 1;
