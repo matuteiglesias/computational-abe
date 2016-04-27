@@ -13,10 +13,12 @@ ABMs are especially suitable for object oriented paradigms as agents can be inst
 
 ### What is this project about?
 In this case, we build up an implementation of an ABM where Keynesian (demand led) processes as well as Schumpeterian-like technological improvement fuel output growth.
-The simulation will generate the agents, and let the system evolve, while computing a set of variables of interest (total output, growth, unemployment, inflation, productivity, etc etc)
+The simulation will generate the agents, and let the system evolve, while computing a set of variables of interest (total output, growth, unemployment, inflation, productivity, etc etc). The output is a .csv file with the simulation results, plus a .txt file with a summary of the parameters you chose.
 For detailed description, and a review of this simulation in action, you can check this [document](https://www.overleaf.com/read/hxfqmrtktwhp).
 
+### The data_analysis.nb file...
+Is a Mathematica notebook, you can use it to process the .csv out of the simulations very directly, and reproduce the plots shown in the description document above.
 
-For general useful information, links and resources on computational agnet based models, check out [Leigh Tesfatsion website](http://www2.econ.iastate.edu/tesfatsi/ace.htm)
+##### For general useful information links and resources on computational agnet based models, check out [Leigh Tesfatsion website](http://www2.econ.iastate.edu/tesfatsi/ace.htm)
 
 Get in touch at: miglesia at ist.ac.at
