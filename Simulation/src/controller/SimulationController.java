@@ -11,17 +11,7 @@ import world.World;
 import entities.AgentFirmCapital;
 import entities.AgentFirmConsumer;
 import entities.GoodCapitalVintage;
-//EKMI
-//<<<<<<< HEAD
-
-
-//Comment
-
-
-//=======
-//EKMI
-//>>>>>>> branch 'master' of ssh://git@github.com/matuteiglesias/computational-abe.git
-	
+//modificado
 	
 public class SimulationController {
 
