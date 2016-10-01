@@ -14,6 +14,7 @@ import entities.GoodCapitalVintage;
 
 
 //emi	
+//emi2
 public class SimulationController {
 
 	private static final Logger logger = Logger.getLogger( SimulationController.class.getName() );
