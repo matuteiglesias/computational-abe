@@ -14,7 +14,7 @@ import entities.GoodCapitalVintage;
 //EKMI
 //<<<<<<< HEAD
 
-
+//Comment2
 //Comment
 
 
