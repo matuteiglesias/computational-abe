@@ -15,6 +15,8 @@ import entities.GoodCapitalVintage;
 
 //emi	
 //emi2
+//comment mati
+
 public class SimulationController {
 
 	private static final Logger logger = Logger.getLogger( SimulationController.class.getName() );
