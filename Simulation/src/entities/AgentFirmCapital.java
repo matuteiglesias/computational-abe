@@ -416,4 +416,12 @@ public class AgentFirmCapital extends AgentFirm {
 		return response;
 	}
 
+
+	public float getLiquidAssets() {
+		return liquidAssets;
+	}
+
+	public void setLiquidAssets(double d) {
+		this.liquidAssets = (float) d;
+	}
 }

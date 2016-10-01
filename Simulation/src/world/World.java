@@ -478,7 +478,7 @@ public class World {
 		//		logger.info("EMPLOYED UNEMPLOYED "+employed+" "+unemployed);
 		this.employedHistory.add((float)(employed / (float) this.personAgents.size()));
 		this.unemployedHistory.add((float)(unemployed / (float) this.personAgents.size()));
-
+		
 		// FINAL OPERATIONS
 		this.consumerBankruptHistory.add(this.consumerBankruptCount);
 		this.consumerBankruptCount = 0;
@@ -580,7 +580,9 @@ public class World {
 		//			float demand = (peopleLiquidAssers * consumer.getMarketShareCycle()) / marketShareSum;
 		//
 		//			}
-		this.wage = this.wage * 1;
+		this.wage = this.wage * (1 + Parameters.PS2*this.ipc());
+		logger.info("WAGE="+this.wage+" IPC="+this.ipc());
+
 
 	}
 
@@ -690,7 +692,7 @@ public class World {
 		this.consumerFirmAgents.remove(consumer);
 		AgentFirmConsumer consumerNew = this.addAgentFirmConsumer();
 		consumerNew.setMachines(machines);
-		consumerNew.setLiquidAssets(SimulationController.getConsumerFirmNW());
+		consumerNew.setLiquidAssets(SimulationController.getConsumerFirmNW()*(0.75 + 0.5*Math.random()));
 
 		List<AgentPerson> employees = this.getEmployees(1);
 
@@ -728,7 +730,7 @@ public class World {
 		capitalNew.setProductivityB(prodB);
 		capitalNew.setLastVintage(vint);
 		capitalNew.getCapitalGoodVintage().add(vint);
-		capitalNew.setLiquidAssets(SimulationController.getCapitalFirmNW());
+		capitalNew.setLiquidAssets(SimulationController.getCapitalFirmNW()*(0.5 + Math.random()));
 
 
 

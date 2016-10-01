@@ -26,8 +26,8 @@ public abstract class Agent {
 		return liquidAssets;
 	}
 
-	public void setLiquidAssets(float liquidAssets) {
-		this.liquidAssets = liquidAssets;
+	public void setLiquidAssets(double d) {
+		this.liquidAssets = (float) d;
 	}
 
 	public int getId() {

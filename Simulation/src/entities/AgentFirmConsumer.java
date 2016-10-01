@@ -605,4 +605,11 @@ public class AgentFirmConsumer extends AgentFirm {
 			}
 		}
 	}
+	public float getLiquidAssets() {
+		return liquidAssets;
+	}
+
+	public void setLiquidAssets(double d) {
+		this.liquidAssets = (float) d;
+	}
 }
