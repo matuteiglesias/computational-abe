@@ -116,7 +116,7 @@ public abstract class AgentFirm extends Agent {
 			AgentPerson person = this.employees.get(i);
 			
 			try{
-				float salaryGross = this.world.getWage();
+				float salaryGross = this.world.getWageCycle();
 				float taxes = salaryGross * this.world.getGovernment().getEmployeeTax();
 				float salaryNet = salaryGross - taxes; 
 				this.liquidAssets = this.liquidAssets - salaryGross;

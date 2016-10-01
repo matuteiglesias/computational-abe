@@ -49,7 +49,7 @@ public class SimulationController {
 
 	private static void createWorld(){
 		world = new World();
-		world.setWage(Parameters.WORLD_WAGE);
+		world.setWageCycle(Parameters.WORLD_WAGE);
 		/*** BEGIN WORLD STARTUP ****/
 		for(int i = 0; i < Parameters.AGENT_FIRM_CAPITAL; i++){
 			AgentFirmCapital agentCapital = world.addAgentFirmCapital();
@@ -58,7 +58,7 @@ public class SimulationController {
 			agentCapital.setProductivityB(getGoodCapitalProductivityB());
 			GoodCapitalVintage vintage = new GoodCapitalVintage();
 
-			vintage.setPrice((world.getWage() / agentCapital.getProductivityB()) * (1 + Parameters.AGENT_FIRM_CAPITAL_MARGIN));
+			vintage.setPrice((world.getWageCycle() / agentCapital.getProductivityB()) * (1 + Parameters.AGENT_FIRM_CAPITAL_MARGIN));
 			vintage.setProductivityA(getGoodCapitalVintageProductivityA());
 			agentCapital.setLastVintage(vintage);
 			agentCapital.getCapitalGoodVintage().add(vintage);
@@ -126,6 +126,8 @@ public class SimulationController {
 			sb.append("Capital bankrupts");
 			sb.append(',');
 			sb.append("Consumer bankrupts");
+			sb.append(',');
+			sb.append("WAGE");
 			sb.append('\n');
 			pw.write(sb.toString());
 
@@ -170,6 +172,8 @@ public class SimulationController {
 					sb.append(world.getCapitalBankruptHistory().get(i));
 					sb.append(',');
 					sb.append(world.getConsumerBankruptHistory().get(i));
+					sb.append(',');
+					sb.append(world.getWageHistory().get(i));
 					sb.append('\n');
 					pw.write(sb.toString());
 

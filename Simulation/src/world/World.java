@@ -42,7 +42,8 @@ public class World {
 
 	private List<WorldCycle> worldCycles = new ArrayList<WorldCycle>();
 
-	protected float wage;
+	protected float wageCycle;
+	private List<Float> wageHistory = new ArrayList<Float>();
 
 	public float consumptionCycle;
 
@@ -182,12 +183,20 @@ public class World {
 		this.worldCycles = worldCycles;
 	}
 
-	public float getWage() {
-		return wage;
+	public float getWageCycle() {
+		return wageCycle;
 	}
 
-	public void setWage(float wage) {
-		this.wage = wage;
+	public void setWageCycle(float wage) {
+		this.wageCycle = wage;
+	}
+
+	public List<Float> getWageHistory() {
+		return wageHistory;
+	}
+
+	public void setWageHistory(List<Float> wageHistory) {
+		this.wageHistory = wageHistory;
 	}
 
 	public float getConsumptionCycle() {
@@ -504,6 +513,8 @@ public class World {
 		//Start 1-10-16
 		this.ipc();
 		this.updateWage();
+		this.wageHistory.add(this.wageCycle);
+		// Es necesario que updateWage se corra antes de agregar otro elemento al history de IPC
 		this.ipcHistory.add(this.ipcCycle);
 		this.ipcCycle = 0;
 		//End 1-10-16
@@ -611,10 +622,10 @@ public class World {
 		if(this.cycle == 1)
 			return;
 		
-		float prevIpc = this.ipcHistory.get(this.ipcHistory.size() -1); 
-		this.wage = this.wage * (1+Parameters.PS2 * (this.ipcCycle - prevIpc ) / prevIpc);
+		float prevIpc = this.ipcHistory.get(this.ipcHistory.size() - 1); 
+		this.wageCycle = this.wageCycle * (1+Parameters.PS2 * (this.ipcCycle - prevIpc ) / prevIpc);
 //		this.wage = this.wage * 1; //(1 + Parameters.PS2*this.ipc());
-		logger.info("WAGE="+this.wage+" IPC="+this.ipcCycle);
+		logger.info("WAGE="+this.wageCycle+" IPC="+this.ipcCycle);
 	}
 
 	public void printSummary(){

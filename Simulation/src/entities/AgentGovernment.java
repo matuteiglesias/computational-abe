@@ -47,7 +47,7 @@ public class AgentGovernment extends Agent {
 			AgentPerson person = unemployed.get(i);
 			
 			try{
-				float salaryGross = this.world.getWage() * Parameters.AGENT_GOVERNMENT_UNEMPLOYED_WAGE;
+				float salaryGross = this.world.getWageCycle() * Parameters.AGENT_GOVERNMENT_UNEMPLOYED_WAGE;
 //				float taxes = salaryGross * this.world.getGovernment().getEmployeeTax();
 				float taxes = 0;
 				float salaryNet = salaryGross - taxes; 

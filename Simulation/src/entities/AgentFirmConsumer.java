@@ -252,7 +252,7 @@ public class AgentFirmConsumer extends AgentFirm {
 	}
 
 	public float getCost(){
-		return this.world.getWage() / this.getMachinesProductivityAverage();
+		return this.world.getWageCycle() / this.getMachinesProductivityAverage();
 
 	}
 	public float getPrice(){
@@ -414,12 +414,12 @@ public class AgentFirmConsumer extends AgentFirm {
 				List<GoodCapital> goods = this.goodCapitalsFromProvider(brochure.manufacturer);
 
 				float newPrice = newVintage.getPrice();
-				float newCost = this.world.getWage() / newVintage.getProductivityA();
+				float newCost = this.world.getWageCycle() / newVintage.getProductivityA();
 
 				//logger.info("FirmConsumer Brochure ExistingProvider Machines");
 				for(int j = 0; j< goods.size(); j++){
 					GoodCapital existingGood = goods.get(j);
-					float existingCost = this.world.getWage() / existingGood.getGoodCapitalVintage().getProductivityA();
+					float existingCost = this.world.getWageCycle() / existingGood.getGoodCapitalVintage().getProductivityA();
 
 					float factor = newPrice / (existingCost - newCost);
 

@@ -187,7 +187,7 @@ public class AgentFirmCapital extends AgentFirm {
 				GoodCapitalVintage vintage = new GoodCapitalVintage();
 				vintage.setProductivityA(productivityFinal);
 
-				float cost = this.world.getWage() / this.productivityB;
+				float cost = this.world.getWageCycle() / this.productivityB;
 				float price = cost * (1 + Parameters.AGENT_FIRM_CAPITAL_MARGIN);
 				vintage.setPrice(price);
 
@@ -297,7 +297,7 @@ public class AgentFirmCapital extends AgentFirm {
 
 				//				float earnings = order.getConsumer().receiveGoodCapital(order);
 				order.getConsumer().receiveGoodCapital(order);
-				float cost = this.world.getWage() / this.productivityB;
+				float cost = this.world.getWageCycle() / this.productivityB;
 				//
 				this.costCycle = this.costCycle + cost;
 				//				this.salesCycle = this.salesCycle + earnings;
