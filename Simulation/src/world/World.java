@@ -68,6 +68,10 @@ public class World {
 	private float ipcCycle;
 
 	private List<Float> ipcHistory = new ArrayList<Float>();
+	
+	private float prodABCycle;
+
+	private List<Float> prodABHistory = new ArrayList<Float>();
 
 	/*******/
 
@@ -262,6 +266,21 @@ public class World {
 
 	public void setIpcHistory(List<Float> ipcHistory) {
 		this.ipcHistory = ipcHistory;
+	}
+	public float getProdABCycle() {
+		return prodABCycle;
+	}
+
+	public void setProdABCycle(float prodABCycle) {
+		this.prodABCycle = prodABCycle;
+	}
+
+	public List<Float> getProdABHistory() {
+		return prodABHistory;
+	}
+
+	public void setProdABHistory(List<Float> prodABHistory) {
+		this.prodABHistory = prodABHistory;
 	}
 
 	/********/
@@ -512,12 +531,15 @@ public class World {
 		
 		//Start 1-10-16
 		this.ipc();
+		this.prodAB();
 		this.updateWage();
 		this.wageHistory.add(this.wageCycle);
 		// Es necesario que updateWage se corra antes de agregar otro elemento al history de IPC
 		this.ipcHistory.add(this.ipcCycle);
 		this.ipcCycle = 0;
 		//End 1-10-16
+		this.prodABHistory.add(this.prodABCycle);
+		this.prodABCycle = 1;
 		
 		this.consumerBankruptHistory.add(this.consumerBankruptCount);
 		this.consumerBankruptCount = 0;
@@ -621,9 +643,9 @@ public class World {
 		
 		if(this.cycle == 1)
 			return;
-		
+		float prevProdAB = this.prodABHistory.get(this.prodABHistory.size() - 1); 
 		float prevIpc = this.ipcHistory.get(this.ipcHistory.size() - 1); 
-		this.wageCycle = this.wageCycle * (1+Parameters.PS2 * (this.ipcCycle - prevIpc ) / prevIpc);
+		this.wageCycle = this.wageCycle * (1 + Parameters.PS1 * (this.prodABCycle - prevProdAB ) / prevProdAB + Parameters.PS2 * (this.ipcCycle - prevIpc ) / prevIpc);
 //		this.wage = this.wage * 1; //(1 + Parameters.PS2*this.ipc());
 		logger.info("WAGE="+this.wageCycle+" IPC="+this.ipcCycle);
 	}
@@ -888,6 +910,14 @@ public class World {
 
 		response = acum / this.marketShareSumGet();
 		this.ipcCycle = response;
+		return response;
+	}
+	
+	public float prodAB(){
+		float response = 0F;
+
+		response = (this.consumerEMP() * this.averageProdAEMP() + this.capitalEMP() * this.averageProdBEMP())/(this.consumerEMP() + this.capitalEMP());
+		this.prodABCycle = response;
 		return response;
 	}
 }

@@ -36,16 +36,17 @@ public class Parameters {
 	public final static float AGENT_GOVERNMENT_FIRM_TAX = 0.1F;
 	public final static float AGENT_GOVERNMENT_UNEMPLOYED_WAGE = 0.4F;
 	public final static int WORLD_WAGE = 30;
-	public final static float PS2 = 0.1F;
+	public final static float PS1 = 0.9F;
+	public final static float PS2 = 0.9F;
 
-	public final static int CYCLES = 100;
-	public final static int SIMULATIONS = 10;
+	public final static int CYCLES = 200;
+	public final static int SIMULATIONS = 1;
 
 	
 	// AgentFirmCapital
 	public final static int SEND_BROCHURE = 10;
 
-	public final static boolean PRINT_DEBUG = true;
+	public final static boolean PRINT_DEBUG = false;
 //	public final static String PATH = "/home/miglesia/Documents/Econ/Simu/";
 	public final static String PATH = "EMI-";
 

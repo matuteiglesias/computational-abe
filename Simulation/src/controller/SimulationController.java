@@ -13,9 +13,6 @@ import entities.AgentFirmConsumer;
 import entities.GoodCapitalVintage;
 
 
-//emi	
-//emi2
-//comment mati
 
 public class SimulationController {
 
