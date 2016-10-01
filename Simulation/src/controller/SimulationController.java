@@ -11,11 +11,18 @@ import world.World;
 import entities.AgentFirmCapital;
 import entities.AgentFirmConsumer;
 import entities.GoodCapitalVintage;
+//EKMI
+//<<<<<<< HEAD
 
 
 //Comment
 
 
+//=======
+//EKMI
+//>>>>>>> branch 'master' of ssh://git@github.com/matuteiglesias/computational-abe.git
+	
+	
 public class SimulationController {
 
 	private static final Logger logger = Logger.getLogger( SimulationController.class.getName() );
@@ -85,7 +92,11 @@ public class SimulationController {
 			printParametersFile();
 			Date date = new Date() ;
 			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
-			PrintWriter pw = new PrintWriter(new File("/home/miglesia/Documents/Economia/Simu/simulation-"+dateFormat.format(date)+".csv"));
+//<<<<<<< HEAD
+//			PrintWriter pw = new PrintWriter(new File("/home/miglesia/Documents/Economia/Simu/simulation-"+dateFormat.format(date)+".csv"));
+//=======
+			PrintWriter pw = new PrintWriter(new File(Parameters.PATH+"simulation-"+dateFormat.format(date)+".csv"));
+//>>>>>>> branch 'master' of ssh://git@github.com/matuteiglesias/computational-abe.git
 			StringBuilder sb = new StringBuilder();
 
 			sb.append("Simulation");
@@ -189,7 +200,11 @@ public class SimulationController {
 		try{
 			Date date = new Date() ;
 			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
-			PrintWriter pwP = new PrintWriter(new File("/home/miglesia/Documents/Economia/Simu/simulation-"+dateFormat.format(date)+"-Params.txt"));
+//<<<<<<< HEAD
+//			PrintWriter pwP = new PrintWriter(new File("/home/miglesia/Documents/Economia/Simu/simulation-"+dateFormat.format(date)+"-Params.txt"));
+//=======
+			PrintWriter pwP = new PrintWriter(new File(Parameters.PATH+"simulation-"+dateFormat.format(date)+"-Params.txt"));
+//>>>>>>> branch 'master' of ssh://git@github.com/matuteiglesias/computational-abe.git
 			StringBuilder sbP = new StringBuilder();
 			sbP.append("AGENT_FIRM_CAPITAL="+Parameters.AGENT_FIRM_CAPITAL+"\n");
 			sbP.append("AGENT_FIRM_CAPITAL_NW="+Parameters.AGENT_FIRM_CAPITAL_NW+"\n");
