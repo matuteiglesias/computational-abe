@@ -36,11 +36,11 @@ public class Parameters {
 	public final static float AGENT_GOVERNMENT_FIRM_TAX = 0.1F;
 	public final static float AGENT_GOVERNMENT_UNEMPLOYED_WAGE = 0.4F;
 	public final static int WORLD_WAGE = 30;
-	public final static float PS1 = 0.9F;
-	public final static float PS2 = 0.9F;
+	public final static float PS1 = 0.1F;
+	public final static float PS2 = 0.1F;
 
-	public final static int CYCLES = 200;
-	public final static int SIMULATIONS = 1;
+	public final static int CYCLES = 250;
+	public final static int SIMULATIONS = 20;
 
 	
 	// AgentFirmCapital

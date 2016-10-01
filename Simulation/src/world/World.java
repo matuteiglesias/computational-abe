@@ -645,9 +645,14 @@ public class World {
 			return;
 		float prevProdAB = this.prodABHistory.get(this.prodABHistory.size() - 1); 
 		float prevIpc = this.ipcHistory.get(this.ipcHistory.size() - 1); 
-		this.wageCycle = this.wageCycle * (1 + Parameters.PS1 * (this.prodABCycle - prevProdAB ) / prevProdAB + Parameters.PS2 * (this.ipcCycle - prevIpc ) / prevIpc);
+		
+		float DAB = (this.prodABCycle - prevProdAB ) / prevProdAB;
+		float Dipc = (this.ipcCycle - prevIpc ) / prevIpc;
+		
+		this.wageCycle = this.wageCycle * (1 + Parameters.PS1 * DAB + Parameters.PS2 * Dipc);
+		
 //		this.wage = this.wage * 1; //(1 + Parameters.PS2*this.ipc());
-		logger.info("WAGE="+this.wageCycle+" IPC="+this.ipcCycle);
+		logger.info("WAGE="+this.wageCycle+" DAB="+DAB+" inflation="+Dipc);
 	}
 
 	public void printSummary(){
