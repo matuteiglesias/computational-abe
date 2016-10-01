@@ -63,6 +63,10 @@ public class World {
 	private float competitivityAverageCycle;
 
 	private List<Float> competitivityAverageHistory = new ArrayList<Float>();
+	
+	private float ipcCycle;
+
+	private List<Float> ipcHistory = new ArrayList<Float>();
 
 	/*******/
 
@@ -233,6 +237,22 @@ public class World {
 	public void setCompetitivityAverageHistory(
 			List<Float> competitivityAverageHistory) {
 		this.competitivityAverageHistory = competitivityAverageHistory;
+	}
+	
+	public float getIpcCycle() {
+		return ipcCycle;
+	}
+
+	public void setIpcCycle(float ipcCycle) {
+		this.ipcCycle = ipcCycle;
+	}
+
+	public List<Float> getIpcHistory() {
+		return ipcHistory;
+	}
+
+	public void setIpcHistory(List<Float> ipcHistory) {
+		this.ipcHistory = ipcHistory;
 	}
 
 	/********/
@@ -480,11 +500,18 @@ public class World {
 		this.unemployedHistory.add((float)(unemployed / (float) this.personAgents.size()));
 		
 		// FINAL OPERATIONS
+		
+		//Start 1-10-16
+		this.ipc();
+		this.updateWage();
+		this.ipcHistory.add(this.ipcCycle);
+		this.ipcCycle = 0;
+		//End 1-10-16
+		
 		this.consumerBankruptHistory.add(this.consumerBankruptCount);
 		this.consumerBankruptCount = 0;
 		this.capitalBankruptHistory.add(this.capitalBankruptCount);
 		this.capitalBankruptCount = 0;
-		this.updateWage();
 		this.worldCycles.add(worldCycle);
 		this.cycle++;
 		return worldCycle;
@@ -580,10 +607,14 @@ public class World {
 		//			float demand = (peopleLiquidAssers * consumer.getMarketShareCycle()) / marketShareSum;
 		//
 		//			}
-		this.wage = this.wage * 1; //(1 + Parameters.PS2*this.ipc());
-		logger.info("WAGE="+this.wage+" IPC="+this.ipc());
-
-
+		
+		if(this.cycle == 1)
+			return;
+		
+		float prevIpc = this.ipcHistory.get(this.ipcHistory.size() -1); 
+		this.wage = this.wage * (1+Parameters.PS2 * (this.ipcCycle - prevIpc ) / prevIpc);
+//		this.wage = this.wage * 1; //(1 + Parameters.PS2*this.ipc());
+		logger.info("WAGE="+this.wage+" IPC="+this.ipcCycle);
 	}
 
 	public void printSummary(){
@@ -845,6 +876,7 @@ public class World {
 		}
 
 		response = acum / this.marketShareSumGet();
+		this.ipcCycle = response;
 		return response;
 	}
 }

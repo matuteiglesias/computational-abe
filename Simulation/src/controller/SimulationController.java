@@ -165,7 +165,7 @@ public class SimulationController {
 					sb.append(',');
 					sb.append(world.capitalEMP());
 					sb.append(',');
-					sb.append(world.ipc());
+					sb.append(world.getIpcHistory().get(i));
 					sb.append(',');
 					sb.append(world.getCapitalBankruptHistory().get(i));
 					sb.append(',');
