@@ -13,7 +13,7 @@ import entities.AgentFirmConsumer;
 import entities.GoodCapitalVintage;
 
 
-	
+//emi	
 public class SimulationController {
 
 	private static final Logger logger = Logger.getLogger( SimulationController.class.getName() );
