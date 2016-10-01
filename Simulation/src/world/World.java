@@ -581,7 +581,7 @@ public class World {
 		//
 		//			}
 		this.wage = this.wage * 1; //(1 + Parameters.PS2*this.ipc());
-		//logger.info("WAGE="+this.wage+" IPC="+this.ipc());
+		logger.info("WAGE="+this.wage+" IPC="+this.ipc());
 
 
 	}
