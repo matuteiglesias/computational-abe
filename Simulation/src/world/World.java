@@ -307,7 +307,7 @@ public class World {
 		AgentFirmConsumer agentConsumer = new AgentFirmConsumer();
 		agentConsumer.setId(idAgentCounter++);
 		agentConsumer.setWorld(this);
-		float marketShare = (float) (1 / (float) Parameters.AGENT_FIRM_CONSUMER);
+		float marketShare = (float) (1 / (float) Parameters.AGENT_FIRM_CONSUMER_Q);
 		//		logger.info("MAKR "+marketShare);
 		agentConsumer.setMarketShareCycle(marketShare);
 		agentConsumer.getMarketShares().add(marketShare);
@@ -754,7 +754,7 @@ public class World {
 		//		int min = 0;
 		//		int index = min + (int)(Math.random() * ((max - min) + 1));
 
-		int index = (int) Math.floor(Math.random() * Parameters.AGENT_FIRM_CONSUMER);
+		int index = (int) Math.floor(Math.random() * Parameters.AGENT_FIRM_CONSUMER_Q);
 		List<GoodCapital> machines = this.consumerFirmAgents.get(index).getMachines();
 		this.agents.remove(consumer);
 		this.firmAgents.remove(consumer);

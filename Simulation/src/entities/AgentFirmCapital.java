@@ -109,7 +109,7 @@ public class AgentFirmCapital extends AgentFirm {
 					response.add(dto);
 				}
 
-				for(int i = 0; i < Parameters.SEND_BROCHURE; i++){
+				for(int i = 0; i < Parameters.AGENT_FIRM_CAPITAL_BROCHURES; i++){
 					BrochureDTO dto = new BrochureDTO();
 					dto.manufacturer = this;
 					dto.vintage = this.lastVintage;
@@ -159,7 +159,7 @@ public class AgentFirmCapital extends AgentFirm {
 
 				boolean success = false;
 				int iter = 0;
-				while(!success && iter < Parameters.AGENT_FIRM_CAPITAL){
+				while(!success && iter < Parameters.AGENT_FIRM_CAPITAL_Q){
 					iter++;
 					int minIndex = 0;
 					int maxIndex = capitals.size() - 1;
