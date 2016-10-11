@@ -25,11 +25,11 @@ public class Parameters {
 	public static float AGENT_FIRM_CONSUMER_MARGIN = 1.5F;
 	public static float AGENT_FIRM_CONSUMER_CAPITAL_INTENSITY = 0.4F;
 	public static int AGENT_FIRM_CONSUMER_NW = 4000;
-	public static int AGENT_FIRM_CONSUMER_PAYBACK_PERIOD = 10;
+	public static int AGENT_FIRM_CONSUMER_PAYBACK_PERIOD = 3;
 	public static int AGENT_FIRM_CONSUMER_COMPETITIVITY_PRICE_W1 = 1;
 	public static int AGENT_FIRM_CONSUMER_COMPETITIVITY_UNFILLED_W2 = 1;
 	public static int AGENT_FIRM_CONSUMER_OBSOLETE = 20;
-	public static float COMPETITIVITY_MARKETSHARE = (float) 0.1;
+	public static float COMPETITIVITY_MARKETSHARE = (float) 1;
 	
 	
 	public static int AGENT_PERSON = 150;
@@ -40,8 +40,8 @@ public class Parameters {
 	public static float AGENT_GOVERNMENT_FIRM_TAX = 0.1F;
 	public static float AGENT_GOVERNMENT_UNEMPLOYED_WAGE = 0.4F;
 	public static int WORLD_WAGE = 30;
-	public static float PS1 = 0.1F;
-	public static float PS2 = 0.1F;
+	public static float PS1 = 1F;
+	public static float PS2 = 1F;
 
 	public static int CYCLES_PER_SIMULATION = 250;
 	public static int SIMULATIONS = 20;

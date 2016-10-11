@@ -502,7 +502,7 @@ public class World {
 			}
 			agentFirm.setUnfilledDemandCycle(0);
 		}
-
+		
 		// SECOND ITERATION FOR PERSON
 		int employed = 0;
 		int unemployed = 0;
@@ -784,13 +784,12 @@ public class World {
 
 		AgentFirmCapital original = this.capitalFirmAgents.get(index);
 		float prodB = original.getProductivityB();
-		//	float prodB = (float) (Parameters.AGENT_FIRM_CAPITAL_PRODUCTIVITY_A_MIN + Math.random() * (Parameters.AGENT_FIRM_CAPITAL_PRODUCTIVITY_A_MAX - Parameters.AGENT_FIRM_CAPITAL_PRODUCTIVITY_A_MIN));
 
 		index = min + (int)(Math.random() * ((max - min) + 1));
 		AgentFirmCapital original2 = this.capitalFirmAgents.get(index);
 		GoodCapitalVintage vint = original2.getLastVintage();
 
-		vint.setProductivityA(vint.getProductivityA() + ( (float) Math.random() ));
+		vint.setProductivityA((float) (vint.getProductivityA() * (1F + (float) Math.random() * 0.01 )));
 		this.agents.remove(capital);
 		this.firmAgents.remove(capital);
 		this.capitalFirmAgents.remove(capital);
@@ -800,8 +799,6 @@ public class World {
 		capitalNew.setLastVintage(vint);
 		capitalNew.getCapitalGoodVintage().add(vint);
 		capitalNew.setLiquidAssets(SimulationController.getCapitalFirmNW()*(0.5 + Math.random()));
-
-
 
 		List<AgentPerson> employees = this.getEmployees(1);
 

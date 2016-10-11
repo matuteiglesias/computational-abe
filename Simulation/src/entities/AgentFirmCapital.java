@@ -136,7 +136,8 @@ public class AgentFirmCapital extends AgentFirm {
 		float IM = (1-parameters.Parameters.AGENT_FIRM_CAPITAL_FRACTION_X)* this.getI();		
 		float pIM = (float) (1 - Math.exp(- parameters.Parameters.AGENT_FIRM_CAPITAL_Z_IM * IM));
 
-
+//		logger.info("pIN = "+pIN+"pIM = "+pIM);
+		
 		this.liquidAssets = this.liquidAssets - this.getI();
 
 
@@ -149,35 +150,35 @@ public class AgentFirmCapital extends AgentFirm {
 			float sigma = (float) (0.2 * (max - min));
 
 			vintageI = (1 + (float) StdRandom.gaussian(0, sigma)) * this.lastVintage.getProductivityA();
+			}
+		
+		float vintageIM = 0F;
+		if(StdRandom.bernoulli(pIM)){
 
-			float vintageIM = 0F;
-			if(StdRandom.bernoulli(pIM)){
+			float aux = 0F;
+			List<AgentFirmCapital> capitals = this.world.getCapitalFirmAgents();
+			//		//logger.info(this.id+" IMIT");
 
-				float aux = 0F;
-				List<AgentFirmCapital> capitals = this.world.getCapitalFirmAgents();
-				//		//logger.info(this.id+" IMIT");
+			boolean success = false;
+			int iter = 0;
+			while(!success && iter < Parameters.AGENT_FIRM_CAPITAL_Q){
+				iter++;
+				int minIndex = 0;
+				int maxIndex = capitals.size() - 1;
+				int index = minIndex + (int)(Math.random() * ((maxIndex - minIndex) + 1));
+				AgentFirmCapital capital = capitals.get(index);
 
-				boolean success = false;
-				int iter = 0;
-				while(!success && iter < Parameters.AGENT_FIRM_CAPITAL_Q){
-					iter++;
-					int minIndex = 0;
-					int maxIndex = capitals.size() - 1;
-					int index = minIndex + (int)(Math.random() * ((maxIndex - minIndex) + 1));
-					AgentFirmCapital capital = capitals.get(index);
-
-					if(capital != this){
-						aux = capital.getLastVintage().getProductivityA();
-						success = true;
-					}
+				if(capital != this){
+					aux = capital.getLastVintage().getProductivityA();
+					success = true;
 				}
+			}
 
-				if(aux > 0){
-					float ratio = aux / this.lastVintage.getProductivityA();
+			if(aux > 0){
+				float ratio = aux / this.lastVintage.getProductivityA();
 
-					if(ratio > 1F /*&& ratio < 1.2F*/){
-						vintageIM = aux;
-					}
+				if(ratio > 1F /*&& ratio < 1.2F*/){
+					vintageIM = aux;
 				}
 			}
 

@@ -144,23 +144,10 @@ public class AgentFirmConsumer extends AgentFirm {
 
 	@Override
 	public AgentDTO runCycle() {
-		// recibe capital goods
-		// produce (evalua demanda)
-		// evaluate new models (compra)
-		// wages
-		// fire or hire
-		//		//logger.info("FirmConsumer Payroll");
 		this.runPayroll();
-
-		//		//logger.info("FirmConsumer Employees");
 		this.processEmployees();
-		// sell
-		// bankrupt
-		//		//logger.info("FirmConsumer Brochure");
 		this.brochuresProcess();
-		//		//logger.info("FirmConsumer Fabrication");
 		this.processFabrication();
-
 		return null;
 	}
 
@@ -189,7 +176,6 @@ public class AgentFirmConsumer extends AgentFirm {
 		this.salesCycle = 0;
 		this.costCycle = 0;
 		this.fabricatedCycle = 0;
-	//	this.investmentCycle = 0;
 		
 		float NW = this.getLiquidAssets();
 
@@ -227,14 +213,12 @@ public class AgentFirmConsumer extends AgentFirm {
 
 		int fabricate = qs + this.stockSpare - stockAvailable;
 
-
 		this.fabricatedCycle = fabricate;
 
 		if(this.machines.size() > 0){
 			float costAcum = 0F;
 			float costUnit = this.getCost();
 			//		this.costCycle = this.getCost();
-
 
 			for(int i = 0; i < fabricate; i++){
 				GoodConsumer good = new GoodConsumer();
@@ -274,7 +258,6 @@ public class AgentFirmConsumer extends AgentFirm {
 
 	private float getMachinesCapital(){
 		float acum = 0F;
-
 		for(int i = 0; i < this.machines.size(); i++){
 			acum = acum + this.machines.get(i).getGoodCapitalVintage().getPrice();
 		}
@@ -327,10 +310,6 @@ public class AgentFirmConsumer extends AgentFirm {
 			BrochureDTO brochure = this.brochures.get(i);
 			if(brochure.consumer != null && brochure.consumer.equals(this)){
 				response.add(brochure);
-				//				if(brochure.vintage.getProductivityA() > productivity){
-				//					selected = brochure;
-				//					productivity = brochure.vintage.getProductivityA();
-				//				}
 			}
 		}
 		return response;
@@ -358,9 +337,8 @@ public class AgentFirmConsumer extends AgentFirm {
 			return;
 
 		//logger.info("PROCESSING BROCHURES");
-
 		// NEW PROVIDERS
-		float investReplace = 0F;
+		float investExpansion = 0F;
 
 		if(true){
 			//logger.info("PROCESSING BROCHURES NEW PROVIDER");
@@ -380,7 +358,6 @@ public class AgentFirmConsumer extends AgentFirm {
 
 				if(brochure.vintage.getProductivityA() >= this.getMachinesProductivityAverage()){
 
-
 					//logger.info("FirmConsumer Brochure NewProvider Investment");
 					while(investment >= brochure.vintage.getPrice()){
 						//logger.info("ID "+this.id+" Iteration "+p++);
@@ -392,7 +369,7 @@ public class AgentFirmConsumer extends AgentFirm {
 						brochure.manufacturer.requestOrderCreate(request);
 						//logger.info("FirmConsumer Brochure Rest Investment");
 						investment = investment - brochure.vintage.getPrice();
-						investReplace = investReplace + brochure.vintage.getPrice();
+						investExpansion = investExpansion + brochure.vintage.getPrice();
 						//logger.info("Investment "+investment);
 
 					}
@@ -401,7 +378,7 @@ public class AgentFirmConsumer extends AgentFirm {
 			}
 		}
 		// EXISTING PROVIDERS
-		float investExpansion = 0F;
+		float investReplace = 0F;
 
 		if(true){
 			//logger.info("FirmConsumer Brochure ExistingProvider");
@@ -423,7 +400,6 @@ public class AgentFirmConsumer extends AgentFirm {
 
 					float factor = newPrice / (existingCost - newCost);
 
-
 					if(factor <= Parameters.AGENT_FIRM_CONSUMER_PAYBACK_PERIOD){
 						// REPLACE MACHINE
 						//logger.info("REPLACING MACHINE FROM EXISTING PROVIDER");
@@ -432,7 +408,7 @@ public class AgentFirmConsumer extends AgentFirm {
 						request.vintage = brochure.vintage;
 						request.toReplace = existingGood;
 						brochure.manufacturer.requestOrderCreate(request);
-						investExpansion = investExpansion + brochure.vintage.getPrice();
+						investReplace = investReplace + brochure.vintage.getPrice();
 						
 					}
 
@@ -547,12 +523,11 @@ public class AgentFirmConsumer extends AgentFirm {
 		index--;
 
 		if(index == 1){
-			response = Math.max(this.stockSpare - this.stock.getStockAvailable(), 0) + this.demandUnitsHistory.get(index);
+			response = this.demandUnitsHistory.get(index);
 		}else if(index > 1){
-			response = (int) Math.max(this.stockSpare - this.stock.getStockAvailable(), 0) + this.demandUnitsHistory.get(index)+Math.round((this.demandUnitsHistory.get(index)-this.demandUnitsHistory.get(index-1)));
+			response = this.demandUnitsHistory.get(index)+Math.round((this.demandUnitsHistory.get(index)-this.demandUnitsHistory.get(index-1)));
 		}else{
-
-			response = Math.max(this.stockSpare - this.stock.getStockAvailable(), 0);
+			response = 0;
 		}
 
 
