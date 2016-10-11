@@ -3,7 +3,7 @@ package parameters;
 public class Parameters {
 
 	public static int RUNS;
-	public static int INDEX;
+	public static String INDEX;
 
 	// SimulationController
 

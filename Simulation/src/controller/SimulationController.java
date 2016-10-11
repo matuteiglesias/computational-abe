@@ -231,7 +231,7 @@ public class SimulationController {
 					// use comma as separator
 					String[] config = line.split(cvsSplitBy);
 
-					parametersConfig.INDEX = Integer.parseInt(config[0]);
+					parametersConfig.INDEX = config[0];
 					parametersConfig.CYCLES_PER_SIMULATION = Integer.parseInt(config[1]);
 					parametersConfig.SIMULATIONS = Integer.parseInt(config[2]);
 					parametersConfig.PRINT_DEBUG = Boolean.parseBoolean(config[3]);

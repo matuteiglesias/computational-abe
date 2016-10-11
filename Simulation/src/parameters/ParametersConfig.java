@@ -2,7 +2,7 @@ package parameters;
 
 public class ParametersConfig {
 	
-	public int INDEX;
+	public String INDEX;
 
 	// SimulationController
 	public int SIMULATIONS;
