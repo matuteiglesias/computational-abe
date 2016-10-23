@@ -10,10 +10,10 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       158,          7]
-NotebookDataLength[     27566,        809]
-NotebookOptionsPosition[     26317,        762]
-NotebookOutlinePosition[     26654,        777]
-CellTagsIndexPosition[     26611,        774]
+NotebookDataLength[     27666,        812]
+NotebookOptionsPosition[     26416,        765]
+NotebookOutlinePosition[     26754,        780]
+CellTagsIndexPosition[     26711,        777]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
@@ -668,20 +668,23 @@ Cell[BoxData[{
      RowBox[{"All", ",", "28"}], "]"}], "]"}], "=", 
    RowBox[{"p", "[", 
     RowBox[{"[", 
-     RowBox[{"All", ",", "3"}], "]"}], "]"}]}], 
-  ";"}], "\[IndentingNewLine]", 
+     RowBox[{"All", ",", "3"}], "]"}], "]"}]}], ";"}], "\[IndentingNewLine]", 
+
  RowBox[{
-  RowBox[{"Export", "[", 
-   RowBox[{"\"\<SimConfig.csv\>\"", ",", 
-    RowBox[{"Join", "[", 
-     RowBox[{
-      RowBox[{"{", "params", "}"}], ",", "f"}], "]"}]}], "]"}], 
-  ";"}]}], "Input",
+  RowBox[{"(*", 
+   RowBox[{
+    RowBox[{"Export", "[", 
+     RowBox[{"\"\<SimConfig.csv\>\"", ",", 
+      RowBox[{"Join", "[", 
+       RowBox[{
+        RowBox[{"{", "params", "}"}], ",", "f"}], "]"}]}], "]"}], ";"}], 
+   "*)"}]}]}], "Input",
  CellChangeTimes->{{3.6851863065961323`*^9, 3.685186375204995*^9}, {
   3.685186513467432*^9, 3.6851865168115788`*^9}, {3.6851866344252243`*^9, 
   3.685186659477294*^9}, {3.685188348006587*^9, 3.68518834809231*^9}, {
   3.6852006748795013`*^9, 3.685200692470313*^9}, {3.6852069504129972`*^9, 
-  3.6852070331269197`*^9}, {3.685639714873074*^9, 3.685639715558878*^9}}],
+  3.6852070331269197`*^9}, {3.685639714873074*^9, 3.685639715558878*^9}, {
+  3.6862156491514263`*^9, 3.686215651771324*^9}}],
 
 Cell[BoxData[
  RowBox[{
@@ -761,7 +764,7 @@ Cell[BoxData["20825"], "Output",
 }, Open  ]]
 },
 WindowSize->{927, 1028},
-WindowMargins->{{Automatic, -9}, {Automatic, -10}},
+WindowMargins->{{Automatic, -10}, {Automatic, -10}},
 FrontEndVersion->"10.1 for Linux x86 (64-bit) (March 23, 2015)",
 StyleDefinitions->"Default.nb"
 ]
@@ -796,18 +799,18 @@ Cell[9422, 267, 3564, 110, 209, "Input"]
 }, Open  ]],
 Cell[CellGroupData[{
 Cell[13023, 382, 219, 3, 45, "Subsection"],
-Cell[13245, 387, 3047, 86, 222, "Input"],
+Cell[13245, 387, 3047, 86, 165, "Input"],
 Cell[CellGroupData[{
 Cell[16317, 477, 3398, 105, 297, "Input"],
 Cell[19718, 584, 146, 2, 32, "Output"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[19901, 591, 2996, 92, 275, "Input"],
-Cell[22900, 685, 776, 15, 23, "Message"],
-Cell[23679, 702, 776, 15, 23, "Message"],
-Cell[24458, 719, 776, 15, 23, "Message"],
-Cell[25237, 736, 794, 15, 23, "Message"],
-Cell[26034, 753, 243, 4, 32, "Output"]
+Cell[19901, 591, 3095, 95, 275, "Input"],
+Cell[22999, 688, 776, 15, 23, "Message"],
+Cell[23778, 705, 776, 15, 23, "Message"],
+Cell[24557, 722, 776, 15, 23, "Message"],
+Cell[25336, 739, 794, 15, 23, "Message"],
+Cell[26133, 756, 243, 4, 32, "Output"]
 }, Open  ]]
 }, Open  ]]
 }, Open  ]]

@@ -652,7 +652,7 @@ public class World {
 		this.wageCycle = this.wageCycle * (1 + Parameters.PS1 * DAB + Parameters.PS2 * Dipc);
 		
 //		this.wage = this.wage * 1; //(1 + Parameters.PS2*this.ipc());
-		logger.info("WAGE="+this.wageCycle+" DAB="+DAB+" inflation="+Dipc);
+//		logger.info("WAGE="+this.wageCycle+" DAB="+DAB+" inflation="+Dipc);
 	}
 
 	public void printSummary(){
