@@ -193,7 +193,7 @@ public class SimulationController {
 					dao.insertSimulation(experimentId, j, thisRun.INDEX);
 					
 					createWorld();
-
+					System.gc();
 					for(int i = 0; i < Parameters.CYCLES_PER_SIMULATION; i++){
 						world.runCycle();
 						long startTime = System.nanoTime();
