@@ -27,7 +27,7 @@ public class SimulationController {
 	private static final Logger logger = Logger.getLogger( SimulationController.class.getName() );
 
 	private static World world;
-	
+
 	private static SimulationDAO dao;
 
 	public static float getGoodCapitalVintageProductivityA(){
@@ -88,19 +88,15 @@ public class SimulationController {
 		logger.info("Initializing system");
 
 		List<ParametersConfig> configRuns = null;
-		
-		Date date = new Date() ;
-		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
-		
-		
+
 		int experimentId = 0;
-		
+
 		//DB - START
 		dao = SimulationDAO.getInstance();
 		dao.connect();
-		
+
 		experimentId = dao.insertExperiment();
-		
+
 		System.out.println("New Experiment ID is "+experimentId);
 		dao.checkLabel("MATIAS");
 		dao.checkLabel("Consumption");			
@@ -119,10 +115,10 @@ public class SimulationController {
 		dao.checkLabel("Consumer_Bankrupts");
 		dao.checkLabel("WAGE");
 		//DB - END
-		
-//		if(true)
-//			return;
-		
+
+		//		if(true)
+		//			return;
+
 		try{
 			configRuns = readConfigFile();
 			if(configRuns == null){
@@ -139,120 +135,39 @@ public class SimulationController {
 			for(int k = 0; k < Parameters.RUNS; k++){
 				ParametersConfig thisRun = configRuns.get(k);
 				thisRun.setSimulationParameters();
-//				printParametersFile();
-				
+				//				printParametersFile();
+
 				dao.insertConfiguration(thisRun, experimentId);
 
-			
-				//			PrintWriter pw = new PrintWriter(new File("/home/miglesia/Documents/Economia/Simu/simulation-"+dateFormat.format(date)+".csv"));
-				
-					
-//				PrintWriter pw = new PrintWriter(new File(Parameters.PATH+"sim-config-"+Parameters.INDEX+"_"+dateFormat.format(date)+".csv"));
-//				StringBuilder sb = new StringBuilder();
-//				sb.append("Simulation");
-//				sb.append(',');
-//				sb.append("Cycle");
-//				sb.append(',');
-//				sb.append("Consumption");
-//				sb.append(',');
-//				sb.append("Employed");
-//				sb.append(',');
-//				sb.append("FabricatedCapital");
-//				sb.append(',');
-//				sb.append("FabricatedConsumer");
-//				sb.append(',');
-//				sb.append("InvestmentCapital");
-//				sb.append(',');
-//				sb.append("InvestmentConsumer");
-//				sb.append(',');
-//				sb.append("AvgProdA_MS");
-//				sb.append(',');
-//				sb.append("AvgProdA_EMP");
-//				sb.append(',');
-//				sb.append("AvgProdB_MS");
-//				sb.append(',');
-//				sb.append("AvgProdB_EMP");
-//				sb.append(',');
-//				sb.append("Consumer_EMP");
-//				sb.append(',');
-//				sb.append("Capital_EMP");
-//				sb.append(',');
-//				sb.append("IPC");
-//				sb.append(',');
-//				sb.append("Capital bankrupts");
-//				sb.append(',');
-//				sb.append("Consumer bankrupts");
-//				sb.append(',');
-//				sb.append("WAGE");
-//				sb.append('\n');
-//				pw.write(sb.toString());
-
 				for(int j = 1; j <= Parameters.SIMULATIONS; j++){
-					logger.info("\n\nRUNNING SIMULATION "+j);
-					
+					long startTime = System.nanoTime();
+
+
 					dao.insertSimulation(experimentId, j, thisRun.INDEX);
-					
+
 					createWorld();
-					System.gc();
+//					dao.createBatchCycle();
 					for(int i = 0; i < Parameters.CYCLES_PER_SIMULATION; i++){
+//						logger.info("RUNNING CYCLE "+i);
 						world.runCycle();
-						long startTime = System.nanoTime();
 						dao.insertCycle(experimentId, j, thisRun.INDEX, i, world);
-						long endTime = System.nanoTime();
+						
+//						DESCOMENTAR LAS TRES SIGUIENTES LINEAS PARA DEBUG DE TIEMPO QUE TOMA CADA UNO DE LOS CICLOS
+//						long endTime = System.nanoTime();
+//						long duration = (endTime - startTime) / 1000000;  //divide by 1000000
+//						logger.info("\t\t RUNNING CYCLE "+j+" TOOK "+duration+" msecs");
+					
+					}//CICLOS DE SIMULACION
 
-						long duration = (endTime - startTime) / 1000000;  //divide by 1000000
-						System.out.println("INSERT CYCLE DURATION IN Msecs "+duration);
-//
-//						sb = new StringBuilder();
-//
-//						sb.append(j);
-//						sb.append(',');
-//						sb.append(i);
-//						sb.append(',');
-//						sb.append(world.getConsumptionHistory().get(i));
-//						sb.append(',');
-//						sb.append(world.getEmployedHistory().get(i));
-//						sb.append(',');
-//						sb.append(world.fabricatedCapitalTotal());
-//						sb.append(',');
-//						sb.append(world.fabricatedConsumerTotal());
-//						sb.append(',');
-//						sb.append(world.investmentCapitalTotal());
-//						sb.append(',');
-//						sb.append(world.investmentConsumerTotal());
-//						sb.append(',');
-//						sb.append(world.averageProdAMS());
-//						sb.append(',');
-//						sb.append(world.averageProdAEMP());
-//						sb.append(',');
-//						sb.append(world.averageProdBMS());
-//						sb.append(',');
-//						sb.append(world.averageProdBEMP());
-//						sb.append(',');
-//						sb.append(world.consumerEMP());
-//						sb.append(',');
-//						sb.append(world.capitalEMP());
-//						sb.append(',');
-//						sb.append(world.getIpcHistory().get(i));
-//						sb.append(',');
-//						sb.append(world.getCapitalBankruptHistory().get(i));
-//						sb.append(',');
-//						sb.append(world.getConsumerBankruptHistory().get(i));
-//						sb.append(',');
-//						sb.append(world.getWageHistory().get(i));
-//						sb.append('\n');
-//						pw.write(sb.toString());
+					long endTime = System.nanoTime();
+					long duration = (endTime - startTime) / 1000000;  //divide by 1000000
+					logger.info("\t RUNNING CONF "+k+" SIM "+j+" TOOK "+duration+" msecs");
 
-					}
 
-					logger.info("\n\nPrinting summary SIMMULATION "+j);
+				}//SIMULACION
+//				dao.executeBatchCycle();
 
-					//				world.printSummary();
-
-				}
-
-//				pw.close();
-			}
+			}//CONFIGURACION
 		}catch(Exception e){
 			e.printStackTrace();
 		}
@@ -262,159 +177,159 @@ public class SimulationController {
 		logger.info("\n\nExiting system");
 	}
 
-//	public static void main(String[] args) {
-//		System.setProperty("java.util.logging.SimpleFormatter.format", "%1$tF %1$tT %4$s %2$s %5$s%6$s%n");
-//		logger.info("Initializing system");
-//
-//		List<ParametersConfig> configRuns = null;
-//		
-//		Date date = new Date() ;
-//		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
-//		
-//		
-//		int experimentId = 0;
-//		
-//		//DB - START
-//		dao = SimulationDAO.getInstance();
-//		dao.connect();
-//		experimentId = dao.insertExperiment();
-//		System.out.println("New Experiment ID is "+experimentId);
-//		//DB - END
-//		
-//		
-//		try{
-//			configRuns = readConfigFile();
-//			if(configRuns == null){
-//				logger.info("Error with config file");
-//				return;
-//			}else{
-//				logger.info("Config file loaded");
-//			}
-//		}catch(Exception e){
-//			e.printStackTrace();
-//		}
-//
-//		try{
-//			for(int k = 0; k < Parameters.RUNS; k++){
-//				configRuns.get(k).setSimulationParameters();
-//
-//				printParametersFile();
-//			
-//				//			PrintWriter pw = new PrintWriter(new File("/home/miglesia/Documents/Economia/Simu/simulation-"+dateFormat.format(date)+".csv"));
-//				
-//					
-//				PrintWriter pw = new PrintWriter(new File(Parameters.PATH+"sim-config-"+Parameters.INDEX+"_"+dateFormat.format(date)+".csv"));
-//				StringBuilder sb = new StringBuilder();
-//				sb.append("Simulation");
-//				sb.append(',');
-//				sb.append("Cycle");
-//				sb.append(',');
-//				sb.append("Consumption");
-//				sb.append(',');
-//				sb.append("Employed");
-//				sb.append(',');
-//				sb.append("FabricatedCapital");
-//				sb.append(',');
-//				sb.append("FabricatedConsumer");
-//				sb.append(',');
-//				sb.append("InvestmentCapital");
-//				sb.append(',');
-//				sb.append("InvestmentConsumer");
-//				sb.append(',');
-//				sb.append("AvgProdA_MS");
-//				sb.append(',');
-//				sb.append("AvgProdA_EMP");
-//				sb.append(',');
-//				sb.append("AvgProdB_MS");
-//				sb.append(',');
-//				sb.append("AvgProdB_EMP");
-//				sb.append(',');
-//				sb.append("Consumer_EMP");
-//				sb.append(',');
-//				sb.append("Capital_EMP");
-//				sb.append(',');
-//				sb.append("IPC");
-//				sb.append(',');
-//				sb.append("Capital bankrupts");
-//				sb.append(',');
-//				sb.append("Consumer bankrupts");
-//				sb.append(',');
-//				sb.append("WAGE");
-//				sb.append('\n');
-//				pw.write(sb.toString());
-//
-//				for(int j = 1; j <= Parameters.SIMULATIONS; j++){
-//					logger.info("\n\nRUNNING SIMULATION "+j);
-//					createWorld();
-//
-//					for(int i = 0; i < Parameters.CYCLES_PER_SIMULATION; i++){
-//						world.runCycle();
-//						sb = new StringBuilder();
-//
-//						sb.append(j);
-//						sb.append(',');
-//						sb.append(i);
-//						sb.append(',');
-//						sb.append(world.getConsumptionHistory().get(i));
-//						sb.append(',');
-//						sb.append(world.getEmployedHistory().get(i));
-//						sb.append(',');
-//						sb.append(world.fabricatedCapitalTotal());
-//						sb.append(',');
-//						sb.append(world.fabricatedConsumerTotal());
-//						sb.append(',');
-//						sb.append(world.investmentCapitalTotal());
-//						sb.append(',');
-//						sb.append(world.investmentConsumerTotal());
-//						sb.append(',');
-//						sb.append(world.averageProdAMS());
-//						sb.append(',');
-//						sb.append(world.averageProdAEMP());
-//						sb.append(',');
-//						sb.append(world.averageProdBMS());
-//						sb.append(',');
-//						sb.append(world.averageProdBEMP());
-//						sb.append(',');
-//						sb.append(world.consumerEMP());
-//						sb.append(',');
-//						sb.append(world.capitalEMP());
-//						sb.append(',');
-//						sb.append(world.getIpcHistory().get(i));
-//						sb.append(',');
-//						sb.append(world.getCapitalBankruptHistory().get(i));
-//						sb.append(',');
-//						sb.append(world.getConsumerBankruptHistory().get(i));
-//						sb.append(',');
-//						sb.append(world.getWageHistory().get(i));
-//						sb.append('\n');
-//						pw.write(sb.toString());
-//
-//					}
-//
-//					logger.info("\n\nPrinting summary SIMMULATION "+j);
-//
-//					//				world.printSummary();
-//
-//				}
-//
-//				pw.close();
-//			}
-//		}catch(Exception e){
-//			e.printStackTrace();
-//		}
-//		//DB - START
-//		dao.close();
-//		//DB - END
-//		logger.info("\n\nExiting system");
-//	}
+	//	public static void main(String[] args) {
+	//		System.setProperty("java.util.logging.SimpleFormatter.format", "%1$tF %1$tT %4$s %2$s %5$s%6$s%n");
+	//		logger.info("Initializing system");
+	//
+	//		List<ParametersConfig> configRuns = null;
+	//		
+	//		Date date = new Date() ;
+	//		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
+	//		
+	//		
+	//		int experimentId = 0;
+	//		
+	//		//DB - START
+	//		dao = SimulationDAO.getInstance();
+	//		dao.connect();
+	//		experimentId = dao.insertExperiment();
+	//		System.out.println("New Experiment ID is "+experimentId);
+	//		//DB - END
+	//		
+	//		
+	//		try{
+	//			configRuns = readConfigFile();
+	//			if(configRuns == null){
+	//				logger.info("Error with config file");
+	//				return;
+	//			}else{
+	//				logger.info("Config file loaded");
+	//			}
+	//		}catch(Exception e){
+	//			e.printStackTrace();
+	//		}
+	//
+	//		try{
+	//			for(int k = 0; k < Parameters.RUNS; k++){
+	//				configRuns.get(k).setSimulationParameters();
+	//
+	//				printParametersFile();
+	//			
+	//				//			PrintWriter pw = new PrintWriter(new File("/home/miglesia/Documents/Economia/Simu/simulation-"+dateFormat.format(date)+".csv"));
+	//				
+	//					
+	//				PrintWriter pw = new PrintWriter(new File(Parameters.PATH+"sim-config-"+Parameters.INDEX+"_"+dateFormat.format(date)+".csv"));
+	//				StringBuilder sb = new StringBuilder();
+	//				sb.append("Simulation");
+	//				sb.append(',');
+	//				sb.append("Cycle");
+	//				sb.append(',');
+	//				sb.append("Consumption");
+	//				sb.append(',');
+	//				sb.append("Employed");
+	//				sb.append(',');
+	//				sb.append("FabricatedCapital");
+	//				sb.append(',');
+	//				sb.append("FabricatedConsumer");
+	//				sb.append(',');
+	//				sb.append("InvestmentCapital");
+	//				sb.append(',');
+	//				sb.append("InvestmentConsumer");
+	//				sb.append(',');
+	//				sb.append("AvgProdA_MS");
+	//				sb.append(',');
+	//				sb.append("AvgProdA_EMP");
+	//				sb.append(',');
+	//				sb.append("AvgProdB_MS");
+	//				sb.append(',');
+	//				sb.append("AvgProdB_EMP");
+	//				sb.append(',');
+	//				sb.append("Consumer_EMP");
+	//				sb.append(',');
+	//				sb.append("Capital_EMP");
+	//				sb.append(',');
+	//				sb.append("IPC");
+	//				sb.append(',');
+	//				sb.append("Capital bankrupts");
+	//				sb.append(',');
+	//				sb.append("Consumer bankrupts");
+	//				sb.append(',');
+	//				sb.append("WAGE");
+	//				sb.append('\n');
+	//				pw.write(sb.toString());
+	//
+	//				for(int j = 1; j <= Parameters.SIMULATIONS; j++){
+	//					logger.info("\n\nRUNNING SIMULATION "+j);
+	//					createWorld();
+	//
+	//					for(int i = 0; i < Parameters.CYCLES_PER_SIMULATION; i++){
+	//						world.runCycle();
+	//						sb = new StringBuilder();
+	//
+	//						sb.append(j);
+	//						sb.append(',');
+	//						sb.append(i);
+	//						sb.append(',');
+	//						sb.append(world.getConsumptionHistory().get(i));
+	//						sb.append(',');
+	//						sb.append(world.getEmployedHistory().get(i));
+	//						sb.append(',');
+	//						sb.append(world.fabricatedCapitalTotal());
+	//						sb.append(',');
+	//						sb.append(world.fabricatedConsumerTotal());
+	//						sb.append(',');
+	//						sb.append(world.investmentCapitalTotal());
+	//						sb.append(',');
+	//						sb.append(world.investmentConsumerTotal());
+	//						sb.append(',');
+	//						sb.append(world.averageProdAMS());
+	//						sb.append(',');
+	//						sb.append(world.averageProdAEMP());
+	//						sb.append(',');
+	//						sb.append(world.averageProdBMS());
+	//						sb.append(',');
+	//						sb.append(world.averageProdBEMP());
+	//						sb.append(',');
+	//						sb.append(world.consumerEMP());
+	//						sb.append(',');
+	//						sb.append(world.capitalEMP());
+	//						sb.append(',');
+	//						sb.append(world.getIpcHistory().get(i));
+	//						sb.append(',');
+	//						sb.append(world.getCapitalBankruptHistory().get(i));
+	//						sb.append(',');
+	//						sb.append(world.getConsumerBankruptHistory().get(i));
+	//						sb.append(',');
+	//						sb.append(world.getWageHistory().get(i));
+	//						sb.append('\n');
+	//						pw.write(sb.toString());
+	//
+	//					}
+	//
+	//					logger.info("\n\nPrinting summary SIMMULATION "+j);
+	//
+	//					//				world.printSummary();
+	//
+	//				}
+	//
+	//				pw.close();
+	//			}
+	//		}catch(Exception e){
+	//			e.printStackTrace();
+	//		}
+	//		//DB - START
+	//		dao.close();
+	//		//DB - END
+	//		logger.info("\n\nExiting system");
+	//	}
 
-	
-	
+
+
 	public static List<ParametersConfig> readConfigFile(){
 		List<ParametersConfig> response = new ArrayList<ParametersConfig>();
 
 		// AQUI CAMBIAR EL PATH DEL ARCHIVO DE CONFIGURACION CSV QUE AHORA ESTA EN EL ECLIPSE.
-//		String csvFile = "/home/miglesia/Simulaciones/SimConfig.csv";
+		//		String csvFile = "/home/miglesia/Simulaciones/SimConfig.csv";
 		String csvFile = "SimConfig.csv";
 		BufferedReader br = null;
 		String line = "";

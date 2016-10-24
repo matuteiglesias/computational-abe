@@ -380,7 +380,7 @@ public class World {
 
 		WorldCycle worldCycle = new WorldCycle();
 
-		logger.info("RUNNING CYCLE "+this.cycle);
+//		logger.info("RUNNING CYCLE "+this.cycle);
 
 
 		for(int i = 0; i < this.agents.size(); i++){
