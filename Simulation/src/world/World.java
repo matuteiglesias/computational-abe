@@ -356,16 +356,14 @@ public class World {
 	}
 
 	private void processBrochures(List<BrochureDTO> brochures){
-		int max = this.consumerFirmAgents.size() - 1;
-		int min = 0;
+		int m = this.consumerFirmAgents.size();
 
 		for(int i = 0; i < brochures.size(); i++){
 			BrochureDTO dto = brochures.get(i);
 
 			AgentFirmConsumer consumer = dto.consumer;
 			if(consumer == null){
-
-				int index = min + (int)(Math.random() * ((max - min) + 1));
+				int index = (int)(Math.random() * m);
 				consumer = this.consumerFirmAgents.get(index);
 			}
 
@@ -379,81 +377,52 @@ public class World {
 	public WorldCycle runCycle(){
 
 		WorldCycle worldCycle = new WorldCycle();
-
 //		logger.info("RUNNING CYCLE "+this.cycle);
-
-
 		for(int i = 0; i < this.agents.size(); i++){
 			Agent agent = this.agents.get(i);
 			//			logger.info("RUNNING CYCLE FOR AGENT "+agent.getCode());
-
 			/* FIRST ITERATION AGENT CAPITAL */
 			if(agent instanceof AgentFirmCapital){
-				//				logger.info("FirmCapital 1");
 				AgentFirmCapital agentFirm = (AgentFirmCapital) agent;
-
-				//				logger.info("FirmCapital 1 2");
 
 				AgentDTO agentDTO = agent.runCycle();
 				worldCycle.agents.add(agentDTO);
-
-				//				logger.info("FirmCapital 1 3");
-
 
 				List<BrochureDTO> brochures = agentFirm.brochuresGet();
 				this.processBrochures(brochures);
 
 				//				logger.info("RECEIVED BROCHURES "+brochures.size());
 
-				//				logger.info("FirmCapital 1 4");
-
-
 				/* FIRST ITERATION AGENT CONSUMER */
 			}else if(agent instanceof AgentFirmConsumer){
-				//				logger.info("FirmConsumer 1 1");
 				AgentFirmConsumer agentFirm = (AgentFirmConsumer) agent;
-
 				AgentDTO agentDTO = agentFirm.runCycle();
-				//				logger.info("FirmConsumer 1 2");
-
 				worldCycle.agents.add(agentDTO);
-
-				//				logger.info("FirmConsumer 1 3");
-
-
-
 
 				/* FIRST ITERATION AGENT PERSON*/
 			}else if(agent instanceof AgentPerson){
-				//				logger.info("Person 1");
 				AgentPerson agentPerson = (AgentPerson) agent;
-
 				AgentDTO agentDTO = agentPerson.runCycle();
 				worldCycle.agents.add(agentDTO);
 
 				/* FIRST ITERATION AGENT GOVERNMENT*/
 			}else if(agent instanceof AgentGovernment){
-				//				logger.info("Government 1");
 				AgentGovernment agentGovernment = (AgentGovernment) agent;
 				AgentDTO agentDTO = agent.runCycle();
 				worldCycle.agents.add(agentDTO);
 				if(Parameters.PRINT_DEBUG){
-
 					logger.info("AGENT_GOVERNMENT="+agentGovernment.getCode()+
 							" LIQUID_ASSETS=$"+agentGovernment.getLiquidAssets()
 							);
 				}
 			}
-
-
 		}
+		
 		// SECOND ITERATION FOR CAPITAL FIRM
 		for(int i = 0; i < this.capitalFirmAgents.size(); i++){
-			//			logger.info("FirmCapital 2");
 			AgentFirmCapital agentFirm = this.capitalFirmAgents.get(i);
 			agentFirm.requestOrdersProcess();
 			agentFirm.processPL();
-			//			agentFirm.setRequestOrders(new ArrayList<AgentFirmCapitalOrderRequest>());
 			if(Parameters.PRINT_DEBUG){
 				logger.info("AGENT_CAPITAL="+agentFirm.getCode()+
 						" LIQUID_ASSETS=$"+agentFirm.getLiquidAssets()+
@@ -503,31 +472,20 @@ public class World {
 			agentFirm.setUnfilledDemandCycle(0);
 		}
 		
-		// SECOND ITERATION FOR PERSON
+		// COMPUTE EMPLOYMENT
 		int employed = 0;
 		int unemployed = 0;
 		for(int i = 0; i < this.personAgents.size(); i++){
-			//			logger.info("Person 2");
 			AgentPerson agentPerson = this.personAgents.get(i);
 			if(agentPerson.isEmployed()){
 				employed++;
 			}else{
 				unemployed++;
 			}
-			if(Parameters.PRINT_DEBUG){
-
-				//				logger.info("AGENT_PERSON="+agentPerson.getCode()+
-				//						" LIQUID_ASSETS=$"+agentPerson.getLiquidAssets()+
-				//						" PRODUCTS="+agentPerson.getGoods().size()
-				//
-				//						);
-			}
 		}
-		//		logger.info("EMPLOYED UNEMPLOYED "+employed+" "+unemployed);
 		this.employedHistory.add((float)(employed / (float) this.personAgents.size()));
 		this.unemployedHistory.add((float)(unemployed / (float) this.personAgents.size()));
 		
-		// FINAL OPERATIONS
 		
 		//Start 1-10-16
 		this.ipc();
@@ -557,16 +515,14 @@ public class World {
 		for(int i = 0; i < this.consumerFirmAgents.size(); i++){
 			acum = acum + this.consumerFirmAgents.get(i).getCompetitivity();
 		}
-
 		float average = acum / this.consumerFirmAgents.size();
-
 		this.competitivityAverageCycle = average;
 		this.competitivityAverageHistory.add(average);
 	}
+	
 	private void sellConsumerGoods(){
-		float peopleLiquidAssers = this.consumptionCycle;
+		float peopleLiquidAssets = this.consumptionCycle;
 		float marketShareSum = this.marketShareSumGet();
-		//		logger.info("MS_S="+marketShareSum);
 		List<GoodConsumer> goods = new ArrayList<GoodConsumer>();
 
 		for(int i = 0; i < this.consumerFirmAgents.size(); i++){
@@ -574,73 +530,46 @@ public class World {
 			float norm = 0F;
 			norm = consumer.getMarketShareCycle() / marketShareSum;
 			consumer.setMarketShareCycle(norm);
-			float demand = (peopleLiquidAssers * consumer.getMarketShareCycle()) ;
+			float demand = (peopleLiquidAssets * consumer.getMarketShareCycle()) ;
 
 			int demandUnits = (int) (demand / consumer.getStock().getPrice());
-			//		logger.info("LA="+peopleLiquidAssers+" MS_S="+marketShareSum+" MS_CS="+consumer.getMarketShareCycle()+" DEMAND="+demand+" DEMANDUN="+demandUnits);
+			//		logger.info("LA="+peopleLiquidAssets+" MS_S="+marketShareSum+" MS_CS="+consumer.getMarketShareCycle()+" DEMAND="+demand+" DEMANDUN="+demandUnits);
 			//			List<GoodConsumer> aux = consumer.getStock().getGoodsConsumer(demandUnits);
-
 			List<GoodConsumer> aux = consumer.getGoodsConsumer(demandUnits);
 			if(aux != null){
-				//				if(aux.size() < demandUnits){
-				//					int UnfilledDemand = (int) demandUnits - aux.size();
-				//				}
-
 				goods.addAll(aux);
-
 			}
-
 		}
-
-
 		List<AgentPerson> persons = new ArrayList<AgentPerson>(this.personAgents);
 		Collections.shuffle(persons);
-
 		while(goods.size() > 0){
 			for(int i = 0; i < persons.size() && goods.size() > 0; i++){
 				AgentPerson person = persons.get(i);
-
 				person.buy(goods.get(0));
 				goods.remove(0);
-
 			}
 		}
-
-
-
 	}
 
 	private float marketShareSumGet(){
 		float response = 0F;
-
 		for(int i = 0; i < this.consumerFirmAgents.size(); i++){
 			response = response + this.consumerFirmAgents.get(i).getMarketShareCycle();
 		}
-
 		return response;
 	}
 
 	private float consumptionUpdate(){
 		float response = 0F;
-
 		for(int i = 0; i < this.personAgents.size(); i++){
 			response = response + this.personAgents.get(i).getLiquidAssets();
 		}
-
 		this.consumptionCycle = response;
 		this.consumptionHistory.add(response);
 		return response;
 	}
 
 	private void updateWage(){
-		//		float sum = 0;
-		//		for(int i = 0; i < this.consumerFirmAgents.size(); i++){
-		//			AgentFirmConsumer consumer = this.consumerFirmAgents.get(i);
-		//			sum = sum + consumer.getMachinesProductivityAverage();
-		//			float demand = (peopleLiquidAssers * consumer.getMarketShareCycle()) / marketShareSum;
-		//
-		//			}
-		
 		if(this.cycle == 1)
 			return;
 		float prevProdAB = this.prodABHistory.get(this.prodABHistory.size() - 1); 
@@ -650,26 +579,21 @@ public class World {
 		float Dipc = (this.ipcCycle - prevIpc ) / prevIpc;
 		
 		this.wageCycle = this.wageCycle * (1 + Parameters.PS1 * DAB + Parameters.PS2 * Dipc);
-		
-//		this.wage = this.wage * 1; //(1 + Parameters.PS2*this.ipc());
+
 //		logger.info("WAGE="+this.wageCycle+" DAB="+DAB+" inflation="+Dipc);
 	}
 
 	public void printSummary(){
-
 		for(int i = 0; i < this.cycle - 1; i++){
 			Float consumption = this.consumptionHistory.get(i);
 			logger.info("CYCLE="+i+" CONSUMPTION="+consumption+" EMPLOYED="+this.employedHistory.get(i)+" COMP_AVG="+this.competitivityAverageHistory.get(i));
 		}
-
 	}
 
 	public List<AgentPerson> unemployedGet(){
 		List<AgentPerson> unemployed = new ArrayList<AgentPerson>();
-
 		for(int i = 0; i < this.personAgents.size(); i++){
 			AgentPerson person = this.personAgents.get(i);
-
 			if(!person.isEmployed()){
 				unemployed.add(person);
 			}
@@ -680,30 +604,22 @@ public class World {
 	public float averageProductivityACapital(){
 		float acum = 0F;
 		float average = 0F;
-
 		for(int i = 0; i < this.capitalFirmAgents.size(); i++){
 			AgentFirmCapital agentFirm = this.capitalFirmAgents.get(i);
-
 			acum = acum + agentFirm.getLastVintage().getProductivityA();
 		}
-
 		average = acum / this.capitalFirmAgents.size();
-
 		return average;
 	}
 
 	public float averageProductivityAConsumer(){
 		float acum = 0F;
 		float average = 0F;
-
 		for(int i = 0; i < this.consumerFirmAgents.size(); i++){
 			AgentFirmConsumer agentFirm = this.consumerFirmAgents.get(i);
-
 			acum = acum + agentFirm.getMachinesProductivityAverage();
 		}
-
 		average = acum / this.consumerFirmAgents.size();
-
 		return average;
 	}
 
@@ -750,10 +666,7 @@ public class World {
 	public void replaceConsumerFirm(AgentFirmConsumer consumer){
 		this.addConsumerBankruptCount();
 		consumer.unemployAll();
-		//		int max = this.firmAgents.size() - 1;
-		//		int min = 0;
-		//		int index = min + (int)(Math.random() * ((max - min) + 1));
-
+		
 		int index = (int) Math.floor(Math.random() * Parameters.AGENT_FIRM_CONSUMER_Q);
 		List<GoodCapital> machines = this.consumerFirmAgents.get(index).getMachines();
 		this.agents.remove(consumer);
@@ -769,11 +682,9 @@ public class World {
 			AgentPerson employee = employees.get(0);
 			employee.setEmployer(consumerNew);
 			consumerNew.getEmployees().add(employee);
-			
-			
-			
 		}
 	}
+	
 	public void replaceCapitalFirm(AgentFirmCapital capital){
 		this.addCapitalBankruptCount();
 		capital.unemployAll();
