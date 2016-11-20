@@ -3,6 +3,7 @@ package entities;
 import world.World;
 import dtos.AgentDTO;
 
+// margarita
 public abstract class Agent {
 
 	protected World world;
