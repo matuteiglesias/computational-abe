@@ -8,11 +8,13 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.Calendar;
+import java.util.logging.Logger;
 
-import parameters.ParametersConfig;
-import world.World;
+import engine.parameters.ParametersConfiguration;
+import model.world.ModelWorld;
 
 public class SimulationDAO {
+	private static final Logger logger = Logger.getLogger( SimulationDAO.class.getName() );
 
 	private static SimulationDAO instance = null;
 	private Connection connection;
@@ -135,7 +137,7 @@ public class SimulationDAO {
 
 	}
 
-	public void insertConfiguration(ParametersConfig thisRun, int experimentId){
+	public void insertConfiguration(ParametersConfiguration thisRun, int experimentId){
 		try {
 			String statement = "INSERT INTO configurations (id, id_experiment) VALUES(?, ?)";
 			PreparedStatement ps = null;
@@ -176,7 +178,7 @@ public class SimulationDAO {
 		}
 	}
 
-	public void insertCycle(int experimentId, int simulationId, String configurationId, int cycleId, World world){
+	public void insertCycle(int experimentId, int simulationId, String configurationId, int cycleId, ModelWorld world){
 		try {
 //			String statement = "INSERT INTO cycles (id_experiment, id_configuration, id_simulation, id) VALUES(?, ?, ?, ?)";
 //			PreparedStatement psCycle = connection.prepareStatement(statement);
@@ -189,7 +191,7 @@ public class SimulationDAO {
 			psCycle.setInt(4, cycleId);
 			psCycle.addBatch();
 			psCycle.executeBatch();
-
+			
 			//INSERTO VALUES
 			this.insertValue(psCycleValues, experimentId, simulationId, configurationId, cycleId, "Consumption", String.valueOf(world.getConsumptionHistory().get(cycleId)));
 			this.insertValue(psCycleValues, experimentId, simulationId, configurationId, cycleId, "Employed", String.valueOf(world.getEmployedHistory().get(cycleId)));
@@ -247,6 +249,8 @@ public class SimulationDAO {
 	public void insertValue(PreparedStatement ps, int experimentId, int simulationId, String configurationId, int cycleId, String name, String value){
 //		Simulation,Cycle,Consumption,Employed,FabricatedCapital,FabricatedConsumer,InvestmentCapital,InvestmentConsumer,AvgProdA_MS,AvgProdA_EMP,AvgProdB_MS,AvgProdB_EMP,Consumer_EMP,Capital_EMP,IPC,Capital bankrupts,Consumer bankrupts,WAGE
 		try {
+			logger.info(experimentId+" "+configurationId+" "+simulationId+" "+cycleId+" "+name+" "+value);
+
 			ps.setInt(1, experimentId);
 			ps.setInt(2, Integer.parseInt(configurationId));
 			ps.setInt(3, simulationId);
