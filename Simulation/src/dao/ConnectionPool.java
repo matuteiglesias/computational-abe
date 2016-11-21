@@ -9,24 +9,24 @@ import java.util.Vector;
 
 public class ConnectionPool{
 	private Vector <Connection> connections = new Vector<Connection>();
+	protected int connectionsQ;
 	protected String driver;
 	protected String jdbc;
-	protected String usuario;
+	protected String user;
 	protected String password;
-	protected int cantCon;
 	
 	private static ConnectionPool pool;
 	
 	private ConnectionPool()
 	{
 		getConfiguration();
-		for (int i= 0; i< cantCon;i++)
-			connections.add(connect());
+		for (int i= 0; i< connectionsQ;i++)
+			connections.add(this.connect());
 	}
 
 	public static ConnectionPool getConnectionPool()
 	{
-		if (pool== null)
+		if (pool == null)
 			pool = new ConnectionPool();
 		return pool;
 	}
@@ -37,7 +37,7 @@ public class ConnectionPool{
 			//Setear driver
 			Class.forName (driver).newInstance ();
 			String dbConnectString = jdbc; 
-			Connection connection = DriverManager.getConnection (dbConnectString, usuario, password);
+			Connection connection = DriverManager.getConnection (dbConnectString, user, password);
 			connection.setAutoCommit(false);
 
 			return connection;
@@ -58,13 +58,13 @@ public class ConnectionPool{
 	
 	public void getConfiguration()
 	{
-		String configuracion = "ConfigBD.txt";
+		String configuration = "ConfigBD.txt";
 		Properties propiedades;
 
 		// Carga del fichero de propiedades 
 		try 
 		{
-			FileInputStream f = new FileInputStream(configuracion);	 
+			FileInputStream f = new FileInputStream(configuration);	 
 			propiedades = new Properties();
 			propiedades.load(f);
 			f.close();
@@ -72,10 +72,9 @@ public class ConnectionPool{
 			// Leo los valores de configuracion
 			jdbc = propiedades.getProperty("jdbc"); 
 			driver = propiedades.getProperty("driver");
-//			servidor = propiedades.getProperty("servidor");
-			usuario = propiedades.getProperty("usuario");
+			user = propiedades.getProperty("usuario");
 			password = propiedades.getProperty("password");
-			cantCon = Integer.parseInt(propiedades.getProperty("conexiones"));
+			connectionsQ = Integer.parseInt(propiedades.getProperty("conexiones"));
 		} 
 		catch (Exception e) 
 		{
@@ -85,7 +84,7 @@ public class ConnectionPool{
 	}
 	public void closeConnections()
 	{
-		for (int i=0; i<connections.size();i++)
+		for (int i = 0; i < connections.size();i++)
 		{
 			try
 			{
@@ -100,15 +99,16 @@ public class ConnectionPool{
 	}
 	public  Connection getConnection()
 	{
-		Connection c = null;
-		if (connections.size()>0)
-			c = connections.remove(0);
-		else
-		{
-			c = connect();
+		Connection connection = null;
+		if (connections.size() > 0){
+			connection = connections.remove(0);
+//			System.out.println("Se tomo una conexión del pool");
+
+		}else{
+			connection = connect();
 			System.out.println("Se ha creado una nueva conexion fuera de los parametros de configuracion");
 		}
-		return c;
+		return connection;
 	}
 	public void realeaseConnection(Connection c)
 	{

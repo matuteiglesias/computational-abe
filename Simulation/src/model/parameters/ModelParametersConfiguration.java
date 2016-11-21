@@ -4,8 +4,8 @@ public class ModelParametersConfiguration extends engine.parameters.ParametersCo
 	
 
 	// SimulationController
-	public static int SIMULATIONS;
-	public int CYCLES_PER_SIMULATION;
+//	public int SIMULATIONS;
+//	public int CYCLES_PER_SIMULATION;
 
 	public int AGENT_FIRM_CAPITAL_Q;
 	public int AGENT_FIRM_CAPITAL_NW;

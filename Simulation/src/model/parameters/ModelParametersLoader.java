@@ -10,12 +10,15 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Logger;
 
+import engine.controller.ConfigurationRunnable;
 import engine.parameters.ParametersConfiguration;
 import engine.parameters.ParametersExperiment;
 
 public class ModelParametersLoader extends engine.parameters.ParametersLoader {
-	
+	private static final Logger logger = Logger.getLogger( ModelParametersLoader.class.getName() );
+
 	public List<ParametersConfiguration> readConfigFile(){
 		List<ParametersConfiguration> response = new ArrayList<ParametersConfiguration>();
 
@@ -78,6 +81,7 @@ public class ModelParametersLoader extends engine.parameters.ParametersLoader {
 				counter++;
 			}
 			ParametersExperiment.CONFIGURATIONS = counter - 1;
+			logger.info("Cantidad de Configuracoines "+ParametersExperiment.CONFIGURATIONS);
 //			ModelParametersSimulation.CONFIGURATIONS = counter - 1;
 
 		} catch (FileNotFoundException e) {

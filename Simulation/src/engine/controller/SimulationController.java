@@ -5,6 +5,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Logger;
 
+import dao.ConnectionPool;
 import dao.SimulationDAO;
 import engine.entities.World;
 import engine.parameters.ParametersConfiguration;
@@ -55,6 +56,8 @@ public abstract class SimulationController {
 		dao.checkLabel("Capital_Bankrupts");
 		dao.checkLabel("Consumer_Bankrupts");
 		dao.checkLabel("WAGE");
+		
+		dao.close();
 		//DB - END
 
 		//		if(true)
@@ -71,14 +74,14 @@ public abstract class SimulationController {
 		}catch(Exception e){
 			e.printStackTrace();
 		}
-        ExecutorService executor = Executors.newFixedThreadPool(5);
+        ExecutorService executor = Executors.newFixedThreadPool(1);
 
 		try{
 			for(int k = 0; k < ParametersExperiment.CONFIGURATIONS; k++){
 				int configurationId = k;
 
 				ParametersConfiguration thisRun = configRuns.get(configurationId);
-				logger.info("Configuracion "+ configurationId);
+//				logger.info("Configuracion "+ configurationId);
 
 //				marga
 //				runSimulation(experimentId, k, thisRun);
@@ -126,12 +129,12 @@ public abstract class SimulationController {
 		}catch(Exception e){
 			e.printStackTrace();
 		}
-		
+		ConnectionPool.getConnectionPool().realeaseConnection(dao.getConnection());
 		//DB - START
-		executor.shutdown();
-		while(executor.isTerminated()){
-			dao.close();
-		}
+//		executor.shutdown();
+//		while(executor.isTerminated()){
+//			ConnectionPool.getConnectionPool().closeConnections();
+//		}
 		//DB - END
 		logger.info("\n\nExiting system");
 	}

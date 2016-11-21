@@ -14,17 +14,17 @@ import model.world.ModelWorld;
 public class SimulationDAO {
 	private static final Logger logger = Logger.getLogger( SimulationDAO.class.getName() );
 
-	private static SimulationDAO instance = null;
+//	private static SimulationDAO instance = null;
 	private Connection connection = ConnectionPool.getConnectionPool().getConnection();
-	private static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";  
-	private static final String DB_URL = "jdbc:mysql://localhost/simulations";
+//	private static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";  
+//	private static final String DB_URL = "jdbc:mysql://localhost/simulations";
 
 	private PreparedStatement psCycleValues;
 	private PreparedStatement psCycle;
 
 	//  Database credentials
-	private static final String USER = "simulations";
-	private static final String PASS = "simulations";
+//	private static final String USER = "simulations";
+//	private static final String PASS = "simulations";
 
 //	public static SimulationDAO getInstance(){
 //		if(instance == null){
@@ -34,13 +34,24 @@ public class SimulationDAO {
 //
 //	}
 //
-//	private SimulationDAO(){
-//
-//	}
+	public SimulationDAO(){
+
+	}
+
+	public Connection getConnection() {
+		return connection;
+	}
+
+	public void setConnection(Connection connection) {
+		this.connection = connection;
+	}
 
 	public void prepare(){
 		//		   Statement stmt = null;
 		try{
+			if(this.connection.isClosed()){
+				logger.info(Thread.currentThread().getName()+" CONEXION CERRADA");
+			}
 //			//STEP 2: Register JDBC driver
 //			Class.forName(JDBC_DRIVER);
 //
@@ -48,7 +59,7 @@ public class SimulationDAO {
 //			System.out.println("Connecting to database...");
 //			connection = DriverManager.getConnection(DB_URL,USER,PASS);
 //			connection.setAutoCommit(false);
-
+//			connection = ConnectionPool.getConnectionPool().getConnection();
 			String statement = "INSERT INTO cycles (id_experiment, id_configuration, id_simulation, id) VALUES(?, ?, ?, ?)";
 			psCycle = connection.prepareStatement(statement);
 			statement = "INSERT INTO results (id_experiment, id_configuration, id_simulation, id_cycle, name, value) VALUES(?, ?, ?, ?, ?, ?)";
@@ -82,7 +93,7 @@ public class SimulationDAO {
 			//			stmt.close();
 			//			connection.close();
 		}catch(SQLException se){
-			System.out.println("SQLException at SimulationDAO connect");
+			System.out.println("SQLException at SimulationDAO connect ["+se.getMessage()+"]");
 			//Handle errors for JDBC
 			se.printStackTrace();
 		}catch(Exception e){
@@ -92,12 +103,21 @@ public class SimulationDAO {
 		}//end try
 	}
 
-	public void close(){
+	public void finish(){
 		try {
 			this.psCycle.close();
 			this.psCycleValues.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void close(){
+		try {
 			connection.commit();
-			connection.close();
+			ConnectionPool.getConnectionPool().realeaseConnection(connection);
+//			connection.commit();
+//			connection.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -149,8 +169,9 @@ public class SimulationDAO {
 			connection.commit();
 
 		} catch (SQLException e) {
-			System.out.println("SQLException at SimulationDAO insertConfiguration");
+			System.out.println("SQLException at SimulationDAO insertConfiguration [[[[[[[[[[");
 			e.printStackTrace();
+			System.out.println("]]]]]]]]]]]]]]]");
 		}
 	}
 
