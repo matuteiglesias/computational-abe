@@ -12,7 +12,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
 
-import engine.controller.ConfigurationRunnable;
+import engine.controller.ConfigurationConsumer;
 import engine.parameters.ParametersConfiguration;
 import engine.parameters.ParametersExperiment;
 
@@ -40,7 +40,7 @@ public class ModelParametersLoader extends engine.parameters.ParametersLoader {
 					// use comma as separator
 					String[] config = line.split(cvsSplitBy);
 
-					parametersConfig.NAME = config[0];
+					parametersConfig.CONFIGURATION_NAME = config[0];
 					parametersConfig.CYCLES_PER_SIMULATION = Integer.parseInt(config[1]);
 					parametersConfig.SIMULATIONS = Integer.parseInt(config[2]);
 					parametersConfig.PRINT_DEBUG = Boolean.parseBoolean(config[3]);

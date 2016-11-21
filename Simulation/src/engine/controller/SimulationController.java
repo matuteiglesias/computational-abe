@@ -1,15 +1,16 @@
 package engine.controller;
 
 import java.util.List;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.logging.Logger;
 
 import dao.ConnectionPool;
 import dao.SimulationDAO;
 import engine.entities.World;
 import engine.parameters.ParametersConfiguration;
-import engine.parameters.ParametersExperiment;
 import engine.parameters.ParametersLoader;
 import model.parameters.ModelParametersLoader;
 
@@ -74,62 +75,39 @@ public abstract class SimulationController {
 		}catch(Exception e){
 			e.printStackTrace();
 		}
-        ExecutorService executor = Executors.newFixedThreadPool(1);
-
-		try{
-			for(int k = 0; k < ParametersExperiment.CONFIGURATIONS; k++){
-				int configurationId = k;
-
-				ParametersConfiguration thisRun = configRuns.get(configurationId);
-//				logger.info("Configuracion "+ configurationId);
-
-//				marga
-//				runSimulation(experimentId, k, thisRun);
-				
-				Runnable worker = new ConfigurationRunnable(experimentId, configurationId, thisRun);
-				executor.execute(worker);
-				
-//				new Thread(r).start();
-//				logger.info("Launched thread for configuration "+ configurationId);
-//				return;
-				
-//				for(int j = 1; j <= ModelParametersSimulation.SIMULATIONS; j++){
-//					long startTime = System.nanoTime();
-//
-//
-//					dao.insertSimulation(experimentId, j, thisRun.INDEX);
-//
-////					margarita 20-11-2016
-////					createWorld();
-//					world = new model.world.ModelWorld();
-////					margarita 20-11-2016
-//
-////					dao.createBatchCycle();
-//					for(int i = 0; i < ModelParametersSimulation.CYCLES_PER_SIMULATION; i++){
-////						logger.info("RUNNING CYCLE "+i);
-//						world.runCycle();
-//						dao.insertCycle(experimentId, j, thisRun.INDEX, i, (ModelWorld) world);
-//						
-////						DESCOMENTAR LAS TRES SIGUIENTES LINEAS PARA DEBUG DE TIEMPO QUE TOMA CADA UNO DE LOS CICLOS
-////						long endTime = System.nanoTime();
-////						long duration = (endTime - startTime) / 1000000;  //divide by 1000000
-////						logger.info("\t\t RUNNING CYCLE "+j+" TOOK "+duration+" msecs");
-//					
-//					}//CICLOS DE SIMULACION
-//
-//					long endTime = System.nanoTime();
-//					long duration = (endTime - startTime) / 1000000;  //divide by 1000000
-//					logger.info("\t RUNNING CONF "+k+" SIM "+j+" TOOK "+duration+" msecs");
-//
-//
-//				}//SIMULACION
-//				dao.executeBatchCycle();
-
-			}//CONFIGURACION
-		}catch(Exception e){
-			e.printStackTrace();
-		}
+		
+		
+		BlockingQueue<ParametersConfiguration> sharedQueue = new LinkedBlockingQueue<ParametersConfiguration>();
+        ExecutorService executor = Executors.newFixedThreadPool(6);
+        
+        Runnable producer = new ConfigurationProducer(sharedQueue, experimentId, configRuns);
+		executor.execute(producer); 
+		
+        for(int i = 0; i < 5; i++){
+    		Runnable consumer = new ConfigurationConsumer(sharedQueue);
+    		executor.execute(consumer); 	
+        }
+			
+		
 		ConnectionPool.getConnectionPool().realeaseConnection(dao.getConnection());
+
+//		try{
+//			for(int k = 0; k < ParametersExperiment.CONFIGURATIONS; k++){
+//				int configurationId = k;
+//				
+//				ParametersConfiguration thisRun = configRuns.get(configurationId);
+//				thisRun.CONFIGURATION_ID = configurationId;
+//				thisRun.EXPERIMENT_ID = experimentId;
+//				
+//				Runnable worker = new ConfigurationConsumer(sharedQueue, thisRun);
+//				executorConsumer.execute(worker);
+//				
+//			}//CONFIGURACION
+//		}catch(Exception e){
+//			e.printStackTrace();
+//		}
+		
+				
 		//DB - START
 //		executor.shutdown();
 //		while(executor.isTerminated()){
