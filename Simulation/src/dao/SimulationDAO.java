@@ -105,6 +105,7 @@ public class SimulationDAO {
 
 	public void finish(){
 		try {
+			psCycleValues.executeBatch();
 			this.psCycle.close();
 			this.psCycleValues.close();
 		} catch (SQLException e) {
@@ -228,7 +229,7 @@ public class SimulationDAO {
 			this.insertValue(psCycleValues, experimentId, configurationId, simulationId, cycleId, "Consumer_Bankrupts", String.valueOf(world.getConsumerBankruptHistory().get(cycleId)));
 			this.insertValue(psCycleValues, experimentId, configurationId, simulationId, cycleId, "WAGE", String.valueOf(world.getWageHistory().get(cycleId)));
 //			logger.info(Thread.currentThread().getName()+" QUERY"+ psCycleValues.toString());
-			psCycleValues.executeBatch();
+//			psCycleValues.executeBatch();
 
 //			psCycle.close();
 //			psCycleValues.close();

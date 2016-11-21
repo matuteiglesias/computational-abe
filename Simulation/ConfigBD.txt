@@ -1,5 +1,5 @@
 driver=com.mysql.jdbc.Driver
-jdbc=jdbc:mysql://localhost/simulations
+jdbc=jdbc:mysql://localhost/simulations?useServerPrepStmts=false&rewriteBatchedStatements=true
 usuario=simulations
 password=simulations
 conexiones=10

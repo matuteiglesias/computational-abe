@@ -58,15 +58,15 @@ public class ConfigurationConsumer implements Runnable {
 					for(int i = 0; i < parameters.CYCLES; i++){
 						int cycleId = i;
 						world.runCycle();
-						long endTime = System.nanoTime();
-						long duration = (endTime - startTime) / 1000000;  //divide by 1000000
+//						long endTime = System.nanoTime();
+//						long duration = (endTime - startTime) / 1000000;  //divide by 1000000
 //						logger.info(Thread.currentThread().getName()+" STEP 2 TOOK "+duration+" msecs");
 						
 //						logger.info(Thread.currentThread().getName()+" insertCycle(expId "+experimentId+", ConfId "+configurationId+", simId "+simulationId+", cycleId "+cycleId+")");
-//						dao.insertCycle(experimentId, configurationId, simulationId, cycleId, world);
+						dao.insertCycle(experimentId, configurationId, simulationId, cycleId, world);
 
-						endTime = System.nanoTime();
-						duration = (endTime - startTime) / 1000000;  //divide by 1000000
+//						endTime = System.nanoTime();
+//						duration = (endTime - startTime) / 1000000;  //divide by 1000000
 //						logger.info(Thread.currentThread().getName()+" STEP 3 TOOK "+duration+" msecs");
 						
 //						DESCOMENTAR LAS TRES SIGUIENTES LINEAS PARA DEBUG DE TIEMPO QUE TOMA CADA UNO DE LOS CICLOS
@@ -83,7 +83,7 @@ public class ConfigurationConsumer implements Runnable {
 					dao.close();
 					long endTime = System.nanoTime();
 					long duration = (endTime - startTime) / 1000000;  //divide by 1000000
-					logger.info("\t RUNNING CONF "+configurationId+" SIM "+j+" CYCLES "+parameters.CYCLES+" TOOK "+duration+" msecs");
+					logger.info(Thread.currentThread().getName()+" RUNNING CONF "+configurationId+" SIM "+j+" CYCLES "+parameters.CYCLES+" TOOK "+duration+" msecs");
 
 				}
 			}

@@ -34,12 +34,26 @@ public class ConnectionPool{
 	{
 		try
 		{
-			//Setear driver
+//			//Setear driver
 			Class.forName (driver).newInstance ();
 			String dbConnectString = jdbc; 
 			Connection connection = DriverManager.getConnection (dbConnectString, user, password);
+			
+//			HikariConfig config = new HikariConfig();
+//			config.addDataSourceProperty("dataSourceClassName", driver);
+//			config.setJdbcUrl(jdbc);
+//			config.setUsername(user);
+//			config.setPassword(password);
+//			config.addDataSourceProperty("cachePrepStmts", "true");
+//			config.addDataSourceProperty("prepStmtCacheSize", "250");
+//			config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
+//
+//			HikariDataSource ds = new HikariDataSource(config);
+//			
+//			Connection connection = ds.getConnection(); 
 			connection.setAutoCommit(false);
 
+//			ds.close();
 			return connection;
 		}
 		catch (SQLException e)
