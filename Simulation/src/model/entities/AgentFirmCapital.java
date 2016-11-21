@@ -109,7 +109,7 @@ public class AgentFirmCapital extends AgentFirm {
 					response.add(dto);
 				}
 
-				for(int i = 0; i < ModelParametersSimulation.AGENT_FIRM_CAPITAL_BROCHURES; i++){
+				for(int i = 0; i < this.world.getParameters().AGENT_FIRM_CAPITAL_BROCHURES; i++){
 					BrochureDTO dto = new BrochureDTO();
 					dto.manufacturer = this;
 					dto.vintage = this.lastVintage;
@@ -131,10 +131,10 @@ public class AgentFirmCapital extends AgentFirm {
 		//	//logger.info(this.id+" investment: "+this.getI());
 
 
-		float IN = model.parameters.ModelParametersSimulation.AGENT_FIRM_CAPITAL_FRACTION_X * this.getI();
-		float pIN = (float) (1 - Math.exp(- model.parameters.ModelParametersSimulation.AGENT_FIRM_CAPITAL_Z_IN * IN));
-		float IM = (1-model.parameters.ModelParametersSimulation.AGENT_FIRM_CAPITAL_FRACTION_X)* this.getI();		
-		float pIM = (float) (1 - Math.exp(- model.parameters.ModelParametersSimulation.AGENT_FIRM_CAPITAL_Z_IM * IM));
+		float IN = this.world.getParameters().AGENT_FIRM_CAPITAL_FRACTION_X * this.getI();
+		float pIN = (float) (1 - Math.exp(- this.world.getParameters().AGENT_FIRM_CAPITAL_Z_IN * IN));
+		float IM = (1-this.world.getParameters().AGENT_FIRM_CAPITAL_FRACTION_X)* this.getI();		
+		float pIM = (float) (1 - Math.exp(- this.world.getParameters().AGENT_FIRM_CAPITAL_Z_IM * IM));
 
 //		logger.info("pIN = "+pIN+"pIM = "+pIM);
 		
@@ -161,7 +161,7 @@ public class AgentFirmCapital extends AgentFirm {
 
 			boolean success = false;
 			int iter = 0;
-			while(!success && iter < ModelParametersSimulation.AGENT_FIRM_CAPITAL_Q){
+			while(!success && iter < this.world.getParameters().AGENT_FIRM_CAPITAL_Q){
 				iter++;
 				int minIndex = 0;
 				int maxIndex = capitals.size() - 1;
@@ -189,7 +189,7 @@ public class AgentFirmCapital extends AgentFirm {
 				vintage.setProductivityA(productivityFinal);
 
 				float cost = this.world.getWageCycle() / this.productivityB;
-				float price = cost * (1 + ModelParametersSimulation.AGENT_FIRM_CAPITAL_MARGIN);
+				float price = cost * (1 + this.world.getParameters().AGENT_FIRM_CAPITAL_MARGIN);
 				vintage.setPrice(price);
 
 				this.capitalGoodVintage.add(vintage);
@@ -238,7 +238,7 @@ public class AgentFirmCapital extends AgentFirm {
 		this.profitHistory.add(profit);
 
 		if(profit > 0){
-			float taxes = profit * ModelParametersSimulation.AGENT_GOVERNMENT_FIRM_TAX;
+			float taxes = profit * this.world.getParameters().AGENT_GOVERNMENT_FIRM_TAX;
 			this.liquidAssets = this.liquidAssets - taxes;
 			this.world.getGovernment().payFirmTax(taxes);
 			//			//logger.info("PAY TAXES");
@@ -410,7 +410,7 @@ public class AgentFirmCapital extends AgentFirm {
 //		Prueba
 		if(this.salesHistory.size() > 0){
 			int index = this.salesHistory.size()-1;
-			response = this.salesHistory.get(index)*model.parameters.ModelParametersSimulation.AGENT_FIRM_CAPITAL_RD_PROPENSITY;
+			response = this.salesHistory.get(index) * this.world.getParameters().AGENT_FIRM_CAPITAL_RD_PROPENSITY;
 		}else{
 			response = 0;
 		}

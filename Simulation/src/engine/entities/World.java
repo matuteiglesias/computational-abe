@@ -5,11 +5,14 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import model.entities.Agent;
+import model.parameters.ModelParametersSimulation;
 
 public abstract class World {
 	
 	private static final Logger logger = Logger.getLogger( World.class.getName() + " Engine" );
 
+	protected ModelParametersSimulation parameters;
+	
 	protected int cycle = 1;
 
 	protected int idAgentCounter = 0;
@@ -34,5 +37,20 @@ public abstract class World {
 		this.idAgentCounter = idAgentCounter;
 	}
 
+	public ModelParametersSimulation getParameters() {
+		return parameters;
+	}
+
+	public void setParameters(ModelParametersSimulation parameters) {
+		this.parameters = parameters;
+	}
+
+	public int getCycle() {
+		return cycle;
+	}
+
+	public void setCycle(int cycle) {
+		this.cycle = cycle;
+	}
 
 }

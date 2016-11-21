@@ -1,0 +1,5 @@
+driver=com.mysql.jdbc.Driver
+jdbc=jdbc:mysql://localhost/simulations
+usuario=simulations
+password=simulations
+conexiones=10

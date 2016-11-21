@@ -264,35 +264,36 @@ public class ModelWorld extends engine.entities.World {
 
 	/********/
 
-	public ModelWorld(){
+	public ModelWorld(ModelParametersSimulation parameters){
+		this.parameters = parameters;
 		this.government = new AgentGovernment();
 		this.government.setId(idAgentCounter++);
 		this.government.setWorld(this);
 		this.agents.add(government);
 
 
-		this.setWageCycle(ModelParametersSimulation.WORLD_WAGE);
+		this.setWageCycle(parameters.WORLD_WAGE);
 		/*** BEGIN WORLD STARTUP ****/
-		for(int i = 0; i < ModelParametersSimulation.AGENT_FIRM_CAPITAL_Q; i++){
+		for(int i = 0; i < parameters.AGENT_FIRM_CAPITAL_Q; i++){
 			AgentFirmCapital agentCapital = this.addAgentFirmCapital();
 			//			agentCapital.setWage(Parameters.AGENT_FIRM_WAGE);
 			agentCapital.setLiquidAssets(getCapitalFirmNW()*(0.5 + Math.random()));
 			agentCapital.setProductivityB(this.getGoodCapitalProductivityB());
 			GoodCapitalVintage vintage = new GoodCapitalVintage();
 
-			vintage.setPrice((this.getWageCycle() / agentCapital.getProductivityB()) * (1 + ModelParametersSimulation.AGENT_FIRM_CAPITAL_MARGIN));
+			vintage.setPrice((this.getWageCycle() / agentCapital.getProductivityB()) * (1 + parameters.AGENT_FIRM_CAPITAL_MARGIN));
 			vintage.setProductivityA(this.getGoodCapitalVintageProductivityA());
 			agentCapital.setLastVintage(vintage);
 			agentCapital.getCapitalGoodVintage().add(vintage);
 		}
 
-		for(int i = 0; i < ModelParametersSimulation.AGENT_FIRM_CONSUMER_Q; i++){
+		for(int i = 0; i < parameters.AGENT_FIRM_CONSUMER_Q; i++){
 			AgentFirmConsumer agentConsumer = this.addAgentFirmConsumer();
 			//			agentConsumer.setWage(Parameters.AGENT_FIRM_WAGE);
 			agentConsumer.setLiquidAssets(getConsumerFirmNW()*(0.75 + 0.5*Math.random()));
 		}
 
-		for(int i = 0; i < ModelParametersSimulation.AGENT_PERSON; i++){
+		for(int i = 0; i < parameters.AGENT_PERSON; i++){
 			this.addAgentPerson();
 		}
 
@@ -301,27 +302,27 @@ public class ModelWorld extends engine.entities.World {
 	}
 
 	public float getGoodCapitalVintageProductivityA(){
-		float min = ModelParametersSimulation.AGENT_FIRM_CAPITAL_PRODUCTIVITY_A_MIN;
-		float max = ModelParametersSimulation.AGENT_FIRM_CAPITAL_PRODUCTIVITY_A_MAX;
+		float min = parameters.AGENT_FIRM_CAPITAL_PRODUCTIVITY_A_MIN;
+		float max = parameters.AGENT_FIRM_CAPITAL_PRODUCTIVITY_A_MAX;
 
 		float random = min + (float)(Math.random() * (max - min));
 		return random;
 	}
 
 	public float getGoodCapitalProductivityB(){
-		float min = ModelParametersSimulation.AGENT_FIRM_CAPITAL_PRODUCTIVITY_B_MIN;
-		float max = ModelParametersSimulation.AGENT_FIRM_CAPITAL_PRODUCTIVITY_B_MAX;
+		float min = parameters.AGENT_FIRM_CAPITAL_PRODUCTIVITY_B_MIN;
+		float max = parameters.AGENT_FIRM_CAPITAL_PRODUCTIVITY_B_MAX;
 
 		float random = min + (float)(Math.random() * (max - min));
 		return random;
 	}
 
-	public static float getCapitalFirmNW(){
-		return ModelParametersSimulation.AGENT_FIRM_CAPITAL_NW;
+	public float getCapitalFirmNW(){
+		return parameters.AGENT_FIRM_CAPITAL_NW;
 	}
 
-	public static float getConsumerFirmNW(){
-		return ModelParametersSimulation.AGENT_FIRM_CONSUMER_NW;
+	public float getConsumerFirmNW(){
+		return parameters.AGENT_FIRM_CONSUMER_NW;
 	}
 
 	public AgentFirmCapital addAgentFirmCapital(){
@@ -338,11 +339,11 @@ public class ModelWorld extends engine.entities.World {
 		AgentFirmConsumer agentConsumer = new AgentFirmConsumer();
 		agentConsumer.setId(idAgentCounter++);
 		agentConsumer.setWorld(this);
-		float marketShare = (float) (1 / (float) ModelParametersSimulation.AGENT_FIRM_CONSUMER_Q);
+		float marketShare = (float) (1 / (float) parameters.AGENT_FIRM_CONSUMER_Q);
 		//		logger.info("MAKR "+marketShare);
 		agentConsumer.setMarketShareCycle(marketShare);
 		agentConsumer.getMarketShares().add(marketShare);
-		agentConsumer.setStockSpare(ModelParametersSimulation.AGENT_FIRM_CONSUMER_STOCK_SPARE);
+		agentConsumer.setStockSpare(parameters.AGENT_FIRM_CONSUMER_STOCK_SPARE);
 		this.stocks.add(agentConsumer.getStock());
 		this.agents.add(agentConsumer);
 		this.firmAgents.add(agentConsumer);
@@ -441,7 +442,7 @@ public class ModelWorld extends engine.entities.World {
 				AgentGovernment agentGovernment = (AgentGovernment) agent;
 				AgentDTO agentDTO = agent.runCycle();
 				worldCycle.agents.add(agentDTO);
-				if(ModelParametersSimulation.PRINT_DEBUG){
+				if(parameters.PRINT_DEBUG){
 					logger.info("AGENT_GOVERNMENT="+agentGovernment.getCode()+
 							" LIQUID_ASSETS=$"+agentGovernment.getLiquidAssets()
 							);
@@ -454,7 +455,7 @@ public class ModelWorld extends engine.entities.World {
 			AgentFirmCapital agentFirm = this.capitalFirmAgents.get(i);
 			agentFirm.requestOrdersProcess();
 			agentFirm.processPL();
-			if(ModelParametersSimulation.PRINT_DEBUG){
+			if(parameters.PRINT_DEBUG){
 				logger.info("AGENT_CAPITAL="+agentFirm.getCode()+
 						" LIQUID_ASSETS=$"+agentFirm.getLiquidAssets()+
 						" EMPLOYEES_Q= "+agentFirm.getEmployees().size()+
@@ -483,7 +484,7 @@ public class ModelWorld extends engine.entities.World {
 			agentFirm.updateMarketShare();
 			agentFirm.removeOldCapital();
 
-			if(ModelParametersSimulation.PRINT_DEBUG){
+			if(parameters.PRINT_DEBUG){
 
 				logger.info("AGENT_CONSUMER="+agentFirm.getCode()+
 						" LIQUID_ASSETS=$"+agentFirm.getLiquidAssets()+
@@ -609,7 +610,7 @@ public class ModelWorld extends engine.entities.World {
 		float DAB = (this.prodABCycle - prevProdAB ) / prevProdAB;
 		float Dipc = (this.ipcCycle - prevIpc ) / prevIpc;
 
-		this.wageCycle = this.wageCycle * (1 + ModelParametersSimulation.PS1 * DAB + ModelParametersSimulation.PS2 * Dipc);
+		this.wageCycle = this.wageCycle * (1 + parameters.PS1 * DAB + parameters.PS2 * Dipc);
 
 		//		logger.info("WAGE="+this.wageCycle+" DAB="+DAB+" inflation="+Dipc);
 	}
@@ -698,7 +699,7 @@ public class ModelWorld extends engine.entities.World {
 		this.addConsumerBankruptCount();
 		consumer.unemployAll();
 
-		int index = (int) Math.floor(Math.random() * ModelParametersSimulation.AGENT_FIRM_CONSUMER_Q);
+		int index = (int) Math.floor(Math.random() * parameters.AGENT_FIRM_CONSUMER_Q);
 		List<GoodCapital> machines = this.consumerFirmAgents.get(index).getMachines();
 		this.agents.remove(consumer);
 		this.firmAgents.remove(consumer);

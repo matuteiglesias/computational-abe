@@ -3,7 +3,6 @@ package model.entities;
 import java.util.List;
 
 import model.dtos.AgentDTO;
-import model.parameters.ModelParametersSimulation;
 
 public class AgentGovernment extends Agent {
 	
@@ -24,12 +23,12 @@ public class AgentGovernment extends Agent {
 	}
 	
 	public float getEmployeeTax(){
-		return ModelParametersSimulation.AGENT_GOVERNMENT_EMPLOYEE_TAX;
+		return this.world.getParameters().AGENT_GOVERNMENT_EMPLOYEE_TAX;
 	}
 	
 
 	public float getFirmProfitTax(){
-		return ModelParametersSimulation.AGENT_GOVERNMENT_FIRM_TAX;
+		return this.world.getParameters().AGENT_GOVERNMENT_FIRM_TAX;
 	}
 	
 	public void payEmployeeTax(float taxes){
@@ -47,7 +46,7 @@ public class AgentGovernment extends Agent {
 			AgentPerson person = unemployed.get(i);
 			
 			try{
-				float salaryGross = this.world.getWageCycle() * ModelParametersSimulation.AGENT_GOVERNMENT_UNEMPLOYED_WAGE;
+				float salaryGross = this.world.getWageCycle() * this.world.getParameters().AGENT_GOVERNMENT_UNEMPLOYED_WAGE;
 //				float taxes = salaryGross * this.world.getGovernment().getEmployeeTax();
 				float taxes = 0;
 				float salaryNet = salaryGross - taxes; 

@@ -3,21 +3,20 @@ package engine.controller;
 import java.util.logging.Logger;
 
 import dao.SimulationDAO;
-import engine.entities.World;
 import engine.parameters.ParametersConfiguration;
+import model.parameters.ModelParametersConfiguration;
 import model.parameters.ModelParametersSimulation;
 import model.world.ModelWorld;
 
 public class ConfigurationRunnable implements Runnable {
 	private static final Logger logger = Logger.getLogger( ConfigurationRunnable.class.getName() );
 
-	private SimulationDAO dao = SimulationDAO.getInstance();
-	protected World world;
+	private SimulationDAO dao = new SimulationDAO();
+	protected ModelWorld world;
 
 	
 	private int experimentId;
 	private int configurationId;
-//	private int simulationId;
 	private ParametersConfiguration thisRun;
 	
 	
@@ -30,31 +29,39 @@ public class ConfigurationRunnable implements Runnable {
 	
 	@Override
 	public void run() {
-		for(int j = 1; j <= ModelParametersSimulation.SIMULATIONS; j++){
+		for(int j = 1; j <= ModelParametersConfiguration.SIMULATIONS; j++){
 			long startTime = System.nanoTime();
 
+			dao.prepare();
 			int simulationId = j;
 
-			dao.insertSimulation(experimentId, simulationId, thisRun.INDEX);
+			ModelParametersSimulation parameters = thisRun.setSimulationParameters();
+			dao.insertConfiguration(experimentId, configurationId, thisRun.NAME);
+			
+			logger.info(Thread.currentThread().getName()+" insertSimulation(expId "+experimentId+", ConfId "+configurationId+")");
+			dao.insertSimulation(experimentId, configurationId, simulationId);
+
 //			public void insertSimulation(int experimentId, int simulationId, String configurationId){
 
 //			margarita 20-11-2016
 //			createWorld();
-			world = new model.world.ModelWorld();
+			world = new model.world.ModelWorld(parameters);
 //			margarita 20-11-2016
 
 //			dao.createBatchCycle();
-			for(int i = 0; i < ModelParametersSimulation.CYCLES_PER_SIMULATION; i++){
-				logger.info("RUNNING EXPERIMENT "+experimentId+" CONFIGURATION "+configurationId+" SIMULATION "+simulationId+" CYCLE "+i);
+			logger.info("CYCLES "+parameters.CYCLES);
+			for(int i = 0; i < parameters.CYCLES; i++){
+				int cycleId = i;
+//				logger.info(Thread.currentThread().getName()+ "RUNNING EXPERIMENT "+experimentId+" CONFIGURATION "+configurationId+" SIMULATION "+simulationId+" CYCLE "+i);
 				world.runCycle();
-				dao.insertCycle(experimentId, simulationId, thisRun.INDEX, i, (ModelWorld) world);
+//				logger.info(Thread.currentThread().getName()+" insertCycle(expId "+experimentId+", ConfId "+configurationId+", simId "+simulationId+", cycleId "+cycleId+")");
+				dao.insertCycle(experimentId, configurationId, simulationId, cycleId, world);
 //				public void insertCycle(int experimentId, int simulationId, String configurationId, int cycleId, ModelWorld world){
 
 //				DESCOMENTAR LAS TRES SIGUIENTES LINEAS PARA DEBUG DE TIEMPO QUE TOMA CADA UNO DE LOS CICLOS
 //				long endTime = System.nanoTime();
 //				long duration = (endTime - startTime) / 1000000;  //divide by 1000000
 //				logger.info("\t\t RUNNING CYCLE "+j+" TOOK "+duration+" msecs");
-			
 			}//CICLOS DE SIMULACION
 
 			long endTime = System.nanoTime();

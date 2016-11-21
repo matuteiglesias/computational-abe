@@ -1,15 +1,16 @@
 package engine.controller;
 
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.logging.Logger;
 
 import dao.SimulationDAO;
 import engine.entities.World;
 import engine.parameters.ParametersConfiguration;
+import engine.parameters.ParametersExperiment;
 import engine.parameters.ParametersLoader;
 import model.parameters.ModelParametersLoader;
-import model.parameters.ModelParametersSimulation;
-import model.world.ModelWorld;
 
 public abstract class SimulationController {
 
@@ -31,9 +32,10 @@ public abstract class SimulationController {
 		int experimentId = 0;
 
 		//DB - START
-		dao = SimulationDAO.getInstance();
-		dao.connect();
-
+//		dao = SimulationDAO.getInstance();
+//		dao.connect();
+		dao = new SimulationDAO();
+		
 		experimentId = dao.insertExperiment();
 
 		System.out.println("New Experiment ID is "+experimentId);
@@ -69,22 +71,22 @@ public abstract class SimulationController {
 		}catch(Exception e){
 			e.printStackTrace();
 		}
+        ExecutorService executor = Executors.newFixedThreadPool(5);
 
 		try{
-			for(int k = 0; k < ModelParametersSimulation.CONFIGURATIONS; k++){
+			for(int k = 0; k < ParametersExperiment.CONFIGURATIONS; k++){
 				int configurationId = k;
 
 				ParametersConfiguration thisRun = configRuns.get(configurationId);
-				thisRun.setSimulationParameters();
-				//				printParametersFile();
-
-				dao.insertConfiguration(thisRun, experimentId);
+				logger.info("Configuracion "+ configurationId);
 
 //				marga
 //				runSimulation(experimentId, k, thisRun);
 				
-				Runnable r = new ConfigurationRunnable(experimentId, configurationId, thisRun);
-				new Thread(r).start();
+				Runnable worker = new ConfigurationRunnable(experimentId, configurationId, thisRun);
+				executor.execute(worker);
+				
+//				new Thread(r).start();
 //				logger.info("Launched thread for configuration "+ configurationId);
 //				return;
 				
@@ -124,8 +126,12 @@ public abstract class SimulationController {
 		}catch(Exception e){
 			e.printStackTrace();
 		}
+		
 		//DB - START
-		dao.close();
+		executor.shutdown();
+		while(executor.isTerminated()){
+			dao.close();
+		}
 		//DB - END
 		logger.info("\n\nExiting system");
 	}

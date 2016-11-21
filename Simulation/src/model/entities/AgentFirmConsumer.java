@@ -7,7 +7,6 @@ import java.util.logging.Logger;
 import model.dtos.AgentDTO;
 import model.dtos.BrochureDTO;
 import model.dtos.OrderRequestDTO;
-import model.parameters.ModelParametersSimulation;
 
 public class AgentFirmConsumer extends AgentFirm {
 	private static final Logger logger = Logger.getLogger( AgentFirmConsumer.class.getName() );
@@ -163,7 +162,7 @@ public class AgentFirmConsumer extends AgentFirm {
 		this.profitHistory.add(profit);
 
 		if(profit > 0){
-			float taxes = profit * ModelParametersSimulation.AGENT_GOVERNMENT_FIRM_TAX;
+			float taxes = profit * this.world.getParameters().AGENT_GOVERNMENT_FIRM_TAX;
 			this.liquidAssets = this.liquidAssets - taxes;
 			this.world.getGovernment().payFirmTax(taxes);
 			//			//logger.info("PAY TAXES");
@@ -187,7 +186,7 @@ public class AgentFirmConsumer extends AgentFirm {
 	public void updateMarketShare(){
 		float competitivity = this.getCompetitivity();
 		float competitivityAverage = this.world.getCompetitivityAverageCycle();
-		float psi = ModelParametersSimulation.COMPETITIVITY_MARKETSHARE* (competitivityAverage - competitivity) / competitivityAverage;
+		float psi = this.world.getParameters().COMPETITIVITY_MARKETSHARE* (competitivityAverage - competitivity) / competitivityAverage;
 		float compareFirst = this.marketShareCycle * ( 1 + psi);
 
 		float newMarketShare = Math.max(compareFirst,0);
@@ -241,13 +240,13 @@ public class AgentFirmConsumer extends AgentFirm {
 	public float getPrice(){
 
 		float cost = this.getCost();
-		float price = cost * (1 + ModelParametersSimulation.AGENT_FIRM_CAPITAL_MARGIN);
+		float price = cost * (1 + this.world.getParameters().AGENT_FIRM_CAPITAL_MARGIN);
 
 		return price;
 	}
 
 	public float getQk(){
-		return ModelParametersSimulation.AGENT_FIRM_CONSUMER_CAPITAL_INTENSITY * getMachinesCapital();
+		return this.world.getParameters().AGENT_FIRM_CONSUMER_CAPITAL_INTENSITY * getMachinesCapital();
 
 	}
 
@@ -399,7 +398,7 @@ public class AgentFirmConsumer extends AgentFirm {
 
 					float factor = newPrice / (existingCost - newCost);
 
-					if(factor <= ModelParametersSimulation.AGENT_FIRM_CONSUMER_PAYBACK_PERIOD){
+					if(factor <= this.world.getParameters().AGENT_FIRM_CONSUMER_PAYBACK_PERIOD){
 						// REPLACE MACHINE
 						//logger.info("REPLACING MACHINE FROM EXISTING PROVIDER");
 						OrderRequestDTO request = new OrderRequestDTO();
@@ -537,17 +536,17 @@ public class AgentFirmConsumer extends AgentFirm {
 		float response = 0F;
 		int i = world.getCycle()-2;
 		if(i > 1 &&	world.getUnemployedHistory().get(i)*world.getPersonAgents().size() < 3){
-			response = (int) this.employees.size() * this.getMachinesProductivityAverage() - this.getQk() / ModelParametersSimulation.AGENT_FIRM_CONSUMER_CAPITAL_INTENSITY;
+			response = (int) this.employees.size() * this.getMachinesProductivityAverage() - this.getQk() / this.world.getParameters().AGENT_FIRM_CONSUMER_CAPITAL_INTENSITY;
 		}else{
-			response = (int) this.getQ0() * this.getPrice() - this.getQk() / ModelParametersSimulation.AGENT_FIRM_CONSUMER_CAPITAL_INTENSITY;
+			response = (int) this.getQ0() * this.getPrice() - this.getQk() / this.world.getParameters().AGENT_FIRM_CONSUMER_CAPITAL_INTENSITY;
 		}
 		response = Math.max(response,0);
 		return response;
 	}
 
 	public float getCompetitivity(){
-		float E = -ModelParametersSimulation.AGENT_FIRM_CONSUMER_COMPETITIVITY_PRICE_W1 * this.getPrice() - 
-				ModelParametersSimulation.AGENT_FIRM_CONSUMER_COMPETITIVITY_UNFILLED_W2 * this.unfilledDemandCycle;
+		float E = -this.world.getParameters().AGENT_FIRM_CONSUMER_COMPETITIVITY_PRICE_W1 * this.getPrice() - 
+				this.world.getParameters().AGENT_FIRM_CONSUMER_COMPETITIVITY_UNFILLED_W2 * this.unfilledDemandCycle;
 
 		return E;
 	}
@@ -573,7 +572,7 @@ public class AgentFirmConsumer extends AgentFirm {
 		for(int i = 0; i < this.machines.size() ; i++){
 			GoodCapital good = this.machines.get(i);
 			int gap = this.world.getCycle() - good.getCycle();
-			int rand = (int) Math.round(Math.random() * 1.5 * ModelParametersSimulation.AGENT_FIRM_CONSUMER_OBSOLETE);
+			int rand = (int) Math.round(Math.random() * 1.5 * this.world.getParameters().AGENT_FIRM_CONSUMER_OBSOLETE);
 			if(gap >= rand){
 				this.machines.remove(good);
 			}

@@ -12,6 +12,7 @@ import java.util.Date;
 import java.util.List;
 
 import engine.parameters.ParametersConfiguration;
+import engine.parameters.ParametersExperiment;
 
 public class ModelParametersLoader extends engine.parameters.ParametersLoader {
 	
@@ -36,7 +37,7 @@ public class ModelParametersLoader extends engine.parameters.ParametersLoader {
 					// use comma as separator
 					String[] config = line.split(cvsSplitBy);
 
-					parametersConfig.INDEX = config[0];
+					parametersConfig.NAME = config[0];
 					parametersConfig.CYCLES_PER_SIMULATION = Integer.parseInt(config[1]);
 					parametersConfig.SIMULATIONS = Integer.parseInt(config[2]);
 					parametersConfig.PRINT_DEBUG = Boolean.parseBoolean(config[3]);
@@ -76,8 +77,8 @@ public class ModelParametersLoader extends engine.parameters.ParametersLoader {
 				}
 				counter++;
 			}
-
-			ModelParametersSimulation.CONFIGURATIONS = counter - 1;
+			ParametersExperiment.CONFIGURATIONS = counter - 1;
+//			ModelParametersSimulation.CONFIGURATIONS = counter - 1;
 
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -96,49 +97,50 @@ public class ModelParametersLoader extends engine.parameters.ParametersLoader {
 
 	}
 	
-	public static void printParametersFile(){
-		try{
-			Date date = new Date() ;
-			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
-			//			PrintWriter pwP = new PrintWriter(new File("/home/miglesia/Documents/Economia/Simu/simulation-"+dateFormat.format(date)+"-Params.txt"));
-			PrintWriter pwP = new PrintWriter(new File(ModelParametersSimulation.PATH+"params-config-"+ModelParametersSimulation.INDEX+"_"+dateFormat.format(date)+".txt"));
-			StringBuilder sbP = new StringBuilder();
-			sbP.append("AGENT_FIRM_CAPITAL_Q="+ModelParametersSimulation.AGENT_FIRM_CAPITAL_Q+"\n");
-			sbP.append("AGENT_FIRM_CAPITAL_NW="+ModelParametersSimulation.AGENT_FIRM_CAPITAL_NW+"\n");
-			sbP.append("AGENT_FIRM_CAPITAL_MARGIN="+ModelParametersSimulation.AGENT_FIRM_CAPITAL_MARGIN+"\n");
-			sbP.append("AGENT_FIRM_CAPITAL_RD_PROPENSITY="+ModelParametersSimulation.AGENT_FIRM_CAPITAL_RD_PROPENSITY+"\n");
-			sbP.append("AGENT_FIRM_CAPITAL_FRACTION_X="+ModelParametersSimulation.AGENT_FIRM_CAPITAL_FRACTION_X+"\n");
-			sbP.append("AGENT_FIRM_CAPITAL_Z_IN="+ModelParametersSimulation.AGENT_FIRM_CAPITAL_Z_IN+"\n");
-			sbP.append("AGENT_FIRM_CAPITAL_Z_IM="+ModelParametersSimulation.AGENT_FIRM_CAPITAL_Z_IM+"\n");
-			sbP.append("AGENT_FIRM_CAPITAL_PRODUCTIVITY_A_MIN="+ModelParametersSimulation.AGENT_FIRM_CAPITAL_PRODUCTIVITY_A_MIN+"\n");
-			sbP.append("AGENT_FIRM_CAPITAL_PRODUCTIVITY_A_MAX="+ModelParametersSimulation.AGENT_FIRM_CAPITAL_PRODUCTIVITY_A_MAX+"\n");
-			sbP.append("AGENT_FIRM_CAPITAL_PRODUCTIVITY_B_MIN="+ModelParametersSimulation.AGENT_FIRM_CAPITAL_PRODUCTIVITY_B_MIN+"\n");
-			sbP.append("AGENT_FIRM_CAPITAL_PRODUCTIVITY_B_MAX="+ModelParametersSimulation.AGENT_FIRM_CAPITAL_PRODUCTIVITY_B_MAX+"\n");
-			sbP.append("AGENT_FIRM_CONSUMER_Q="+ModelParametersSimulation.AGENT_FIRM_CONSUMER_Q+"\n");
-			sbP.append("AGENT_FIRM_CONSUMER_STOCK_SPARE="+ModelParametersSimulation.AGENT_FIRM_CONSUMER_STOCK_SPARE+"\n");
-			sbP.append("AGENT_FIRM_CONSUMER_MARGIN="+ModelParametersSimulation.AGENT_FIRM_CONSUMER_MARGIN+"\n");
-			sbP.append("AGENT_FIRM_CONSUMER_CAPITAL_INTENSITY="+ModelParametersSimulation.AGENT_FIRM_CONSUMER_CAPITAL_INTENSITY+"\n");
-			sbP.append("AGENT_FIRM_CONSUMER_NW="+ModelParametersSimulation.AGENT_FIRM_CONSUMER_NW+"\n");
-			sbP.append("AGENT_FIRM_CONSUMER_PAYBACK_PERIOD="+ModelParametersSimulation.AGENT_FIRM_CONSUMER_PAYBACK_PERIOD+"\n");
-			sbP.append("AGENT_FIRM_CONSUMER_COMPETITIVITY_PRICE_W1="+ModelParametersSimulation.AGENT_FIRM_CONSUMER_COMPETITIVITY_PRICE_W1+"\n");
-			sbP.append("AGENT_FIRM_CONSUMER_COMPETITIVITY_UNFILLED_W2="+ModelParametersSimulation.AGENT_FIRM_CONSUMER_COMPETITIVITY_UNFILLED_W2+"\n");
-			sbP.append("AGENT_FIRM_CONSUMER_OBSOLETE="+ModelParametersSimulation.AGENT_FIRM_CONSUMER_OBSOLETE+"\n");
-			sbP.append("COMPETITIVITY_MARKETSHARE="+ModelParametersSimulation.COMPETITIVITY_MARKETSHARE+"\n");
-			sbP.append("AGENT_PERSON="+ModelParametersSimulation.AGENT_PERSON+"\n");
-			sbP.append("AGENT_PERSON_EXPEND="+ModelParametersSimulation.AGENT_PERSON_EXPEND+"\n");
-			sbP.append("AGENT_GOVERNMENT_EMPLOYEE_TAX="+ModelParametersSimulation.AGENT_GOVERNMENT_EMPLOYEE_TAX+"\n");
-			sbP.append("AGENT_GOVERNMENT_FIRM_TAX="+ModelParametersSimulation.AGENT_GOVERNMENT_FIRM_TAX+"\n");
-			sbP.append("AGENT_GOVERNMENT_UNEMPLOYED_WAGE="+ModelParametersSimulation.AGENT_GOVERNMENT_UNEMPLOYED_WAGE+"\n");
-			sbP.append("WORLD_WAGE="+ModelParametersSimulation.WORLD_WAGE+"\n");
-			sbP.append("CYCLES_PER_SIMULATION="+ModelParametersSimulation.CYCLES_PER_SIMULATION+"\n");
-			sbP.append("SIMULATIONS="+ModelParametersSimulation.SIMULATIONS+"\n");
-			sbP.append("AGENT_FIRM_CAPITAL_BROCHURES="+ModelParametersSimulation.AGENT_FIRM_CAPITAL_BROCHURES+"\n");
-			sbP.append("PRINT_DEBUG="+ModelParametersSimulation.PRINT_DEBUG+"\n");
-			pwP.write(sbP.toString());
-			pwP.close();
-		}catch(Exception e){
-			e.printStackTrace();
-		}
-	}
+//	DEPRECADO EN MARGARITA POR PROBLEMA DE RELACIONES ESTATICAS 20-11-2016
+//	public static void printParametersFile(){
+//		try{
+//			Date date = new Date() ;
+//			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
+//			//			PrintWriter pwP = new PrintWriter(new File("/home/miglesia/Documents/Economia/Simu/simulation-"+dateFormat.format(date)+"-Params.txt"));
+//			PrintWriter pwP = new PrintWriter(new File(ModelParametersSimulation.PATH+"params-config-"+ModelParametersSimulation.INDEX+"_"+dateFormat.format(date)+".txt"));
+//			StringBuilder sbP = new StringBuilder();
+//			sbP.append("AGENT_FIRM_CAPITAL_Q="+ModelParametersSimulation.AGENT_FIRM_CAPITAL_Q+"\n");
+//			sbP.append("AGENT_FIRM_CAPITAL_NW="+ModelParametersSimulation.AGENT_FIRM_CAPITAL_NW+"\n");
+//			sbP.append("AGENT_FIRM_CAPITAL_MARGIN="+ModelParametersSimulation.AGENT_FIRM_CAPITAL_MARGIN+"\n");
+//			sbP.append("AGENT_FIRM_CAPITAL_RD_PROPENSITY="+ModelParametersSimulation.AGENT_FIRM_CAPITAL_RD_PROPENSITY+"\n");
+//			sbP.append("AGENT_FIRM_CAPITAL_FRACTION_X="+ModelParametersSimulation.AGENT_FIRM_CAPITAL_FRACTION_X+"\n");
+//			sbP.append("AGENT_FIRM_CAPITAL_Z_IN="+ModelParametersSimulation.AGENT_FIRM_CAPITAL_Z_IN+"\n");
+//			sbP.append("AGENT_FIRM_CAPITAL_Z_IM="+ModelParametersSimulation.AGENT_FIRM_CAPITAL_Z_IM+"\n");
+//			sbP.append("AGENT_FIRM_CAPITAL_PRODUCTIVITY_A_MIN="+ModelParametersSimulation.AGENT_FIRM_CAPITAL_PRODUCTIVITY_A_MIN+"\n");
+//			sbP.append("AGENT_FIRM_CAPITAL_PRODUCTIVITY_A_MAX="+ModelParametersSimulation.AGENT_FIRM_CAPITAL_PRODUCTIVITY_A_MAX+"\n");
+//			sbP.append("AGENT_FIRM_CAPITAL_PRODUCTIVITY_B_MIN="+ModelParametersSimulation.AGENT_FIRM_CAPITAL_PRODUCTIVITY_B_MIN+"\n");
+//			sbP.append("AGENT_FIRM_CAPITAL_PRODUCTIVITY_B_MAX="+ModelParametersSimulation.AGENT_FIRM_CAPITAL_PRODUCTIVITY_B_MAX+"\n");
+//			sbP.append("AGENT_FIRM_CONSUMER_Q="+ModelParametersSimulation.AGENT_FIRM_CONSUMER_Q+"\n");
+//			sbP.append("AGENT_FIRM_CONSUMER_STOCK_SPARE="+ModelParametersSimulation.AGENT_FIRM_CONSUMER_STOCK_SPARE+"\n");
+//			sbP.append("AGENT_FIRM_CONSUMER_MARGIN="+ModelParametersSimulation.AGENT_FIRM_CONSUMER_MARGIN+"\n");
+//			sbP.append("AGENT_FIRM_CONSUMER_CAPITAL_INTENSITY="+ModelParametersSimulation.AGENT_FIRM_CONSUMER_CAPITAL_INTENSITY+"\n");
+//			sbP.append("AGENT_FIRM_CONSUMER_NW="+ModelParametersSimulation.AGENT_FIRM_CONSUMER_NW+"\n");
+//			sbP.append("AGENT_FIRM_CONSUMER_PAYBACK_PERIOD="+ModelParametersSimulation.AGENT_FIRM_CONSUMER_PAYBACK_PERIOD+"\n");
+//			sbP.append("AGENT_FIRM_CONSUMER_COMPETITIVITY_PRICE_W1="+ModelParametersSimulation.AGENT_FIRM_CONSUMER_COMPETITIVITY_PRICE_W1+"\n");
+//			sbP.append("AGENT_FIRM_CONSUMER_COMPETITIVITY_UNFILLED_W2="+ModelParametersSimulation.AGENT_FIRM_CONSUMER_COMPETITIVITY_UNFILLED_W2+"\n");
+//			sbP.append("AGENT_FIRM_CONSUMER_OBSOLETE="+ModelParametersSimulation.AGENT_FIRM_CONSUMER_OBSOLETE+"\n");
+//			sbP.append("COMPETITIVITY_MARKETSHARE="+ModelParametersSimulation.COMPETITIVITY_MARKETSHARE+"\n");
+//			sbP.append("AGENT_PERSON="+ModelParametersSimulation.AGENT_PERSON+"\n");
+//			sbP.append("AGENT_PERSON_EXPEND="+ModelParametersSimulation.AGENT_PERSON_EXPEND+"\n");
+//			sbP.append("AGENT_GOVERNMENT_EMPLOYEE_TAX="+ModelParametersSimulation.AGENT_GOVERNMENT_EMPLOYEE_TAX+"\n");
+//			sbP.append("AGENT_GOVERNMENT_FIRM_TAX="+ModelParametersSimulation.AGENT_GOVERNMENT_FIRM_TAX+"\n");
+//			sbP.append("AGENT_GOVERNMENT_UNEMPLOYED_WAGE="+ModelParametersSimulation.AGENT_GOVERNMENT_UNEMPLOYED_WAGE+"\n");
+//			sbP.append("WORLD_WAGE="+ModelParametersSimulation.WORLD_WAGE+"\n");
+//			sbP.append("CYCLES_PER_SIMULATION="+ModelParametersSimulation.CYCLES_PER_SIMULATION+"\n");
+//			sbP.append("SIMULATIONS="+ModelParametersSimulation.SIMULATIONS+"\n");
+//			sbP.append("AGENT_FIRM_CAPITAL_BROCHURES="+ModelParametersSimulation.AGENT_FIRM_CAPITAL_BROCHURES+"\n");
+//			sbP.append("PRINT_DEBUG="+ModelParametersSimulation.PRINT_DEBUG+"\n");
+//			pwP.write(sbP.toString());
+//			pwP.close();
+//		}catch(Exception e){
+//			e.printStackTrace();
+//		}
+//	}
 
 }
