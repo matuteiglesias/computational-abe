@@ -215,8 +215,10 @@ public class SimulationDAO {
 			//INSERTO VALUES
 			this.insertValue(psCycleValues, experimentId, configurationId, simulationId, cycleId, "Consumption", String.valueOf(world.getConsumptionHistory().get(cycleId)));
 			this.insertValue(psCycleValues, experimentId, configurationId, simulationId, cycleId, "Employed", String.valueOf(world.getEmployedHistory().get(cycleId)));
-			this.insertValue(psCycleValues, experimentId, configurationId, simulationId, cycleId, "FabricatedCapital", String.valueOf(world.fabricatedCapitalTotal()));
-			this.insertValue(psCycleValues, experimentId, configurationId, simulationId, cycleId, "FabricatedConsumer", String.valueOf(world.fabricatedConsumerTotal()));
+			this.insertValue(psCycleValues, experimentId, configurationId, simulationId, cycleId, "FabricatedCapitalTotal", String.valueOf(world.fabricatedCapitalTotal()));
+			this.insertValue(psCycleValues, experimentId, configurationId, simulationId, cycleId, "FabricatedConsumerTotal", String.valueOf(world.fabricatedConsumerTotal()));
+			this.insertValue(psCycleValues, experimentId, configurationId, simulationId, cycleId, "SalesCapitalTotal", String.valueOf(world.salesCapitalCycleTotal()));
+			this.insertValue(psCycleValues, experimentId, configurationId, simulationId, cycleId, "SalesConsumerTotal", String.valueOf(world.salesConsumerCycleTotal()));		
 			this.insertValue(psCycleValues, experimentId, configurationId, simulationId, cycleId, "InvestmentCapital", String.valueOf(world.investmentCapitalTotal()));
 			this.insertValue(psCycleValues, experimentId, configurationId, simulationId, cycleId, "AvgProdA_MS", String.valueOf(world.averageProdAMS()));
 			this.insertValue(psCycleValues, experimentId, configurationId, simulationId, cycleId, "AvgProdA_EMP", String.valueOf(world.averageProdAEMP()));

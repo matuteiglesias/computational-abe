@@ -170,6 +170,8 @@ public class AgentFirmConsumer extends AgentFirm {
 		
 		float salesproy = this.getSalesCycle();
 
+		this.fabricatedLastCycle = this.fabricatedCycle;
+		
 		this.soldUnitsCycle = 0;
 		this.salesCycle = 0;
 		this.costCycle = 0;

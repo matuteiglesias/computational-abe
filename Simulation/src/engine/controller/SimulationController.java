@@ -41,7 +41,6 @@ public abstract class SimulationController {
 		experimentId = dao.insertExperiment();
 
 		System.out.println("New Experiment ID is "+experimentId);
-		dao.checkLabel("MATIAS");
 		dao.checkLabel("Consumption");			
 		dao.checkLabel("Employed");
 		dao.checkLabel("FabricatedCapital");	
@@ -57,7 +56,9 @@ public abstract class SimulationController {
 		dao.checkLabel("Capital_Bankrupts");
 		dao.checkLabel("Consumer_Bankrupts");
 		dao.checkLabel("WAGE");
-		
+		dao.checkLabel("SalesCapitalTotal");
+		dao.checkLabel("SalesConsumerTotal");
+
 		dao.close();
 		//DB - END
 

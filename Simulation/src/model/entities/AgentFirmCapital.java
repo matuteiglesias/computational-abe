@@ -244,6 +244,8 @@ public class AgentFirmCapital extends AgentFirm {
 			//			//logger.info("PAY TAXES");
 		}
 
+		this.fabricatedLastCycle = this.fabricatedCycle;
+		
 		this.soldUnitsCycle = 0;
 		this.salesCycle = 0;
 		this.costCycle = 0;

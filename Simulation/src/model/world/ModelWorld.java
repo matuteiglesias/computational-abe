@@ -658,7 +658,8 @@ public class ModelWorld extends engine.entities.World {
 	public int fabricatedCapitalTotal(){
 		int acum = 0;
 		for(int i = 0; i < this.capitalFirmAgents.size(); i++){
-			acum = acum + this.capitalFirmAgents.get(i).fabricatedTotal();
+			acum = acum + this.capitalFirmAgents.get(i).getFabricatedLastCycle();
+
 		}
 		return acum;
 	}
@@ -666,11 +667,29 @@ public class ModelWorld extends engine.entities.World {
 	public int fabricatedConsumerTotal(){
 		int acum = 0;
 		for(int i = 0; i < this.consumerFirmAgents.size(); i++){
-			acum = acum + this.consumerFirmAgents.get(i).fabricatedTotal();
+			acum = acum + this.consumerFirmAgents.get(i).getFabricatedLastCycle();
 		}
 		return acum;
 	}
 
+	public float salesCapitalCycleTotal(){
+		float acum = 0;
+		for(int i = 0; i < this.capitalFirmAgents.size(); i++){
+			AgentFirmCapital agent = this.capitalFirmAgents.get(i);
+			acum = acum + agent.getFabricatedLastCycle() * agent.getLastVintage().getPrice();
+		}
+		return acum;
+	}
+
+	public float salesConsumerCycleTotal(){
+		float acum = 0;
+		for(int i = 0; i < this.consumerFirmAgents.size(); i++){
+			AgentFirmConsumer agent = this.consumerFirmAgents.get(i);
+			acum = acum + agent.getFabricatedLastCycle() * agent.getPrice() ;
+		}
+		return acum;
+	}
+	
 	public float investmentCapitalTotal(){
 		float acum = 0;
 		for(int i = 0; i < this.capitalFirmAgents.size(); i++){

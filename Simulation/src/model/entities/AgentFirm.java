@@ -18,6 +18,8 @@ public abstract class AgentFirm extends Agent {
 	protected List<Float> costHistory = new ArrayList<Float>();
 	
 	protected int fabricatedCycle;
+	
+	protected int fabricatedLastCycle;
 
 	protected List<Integer> fabricatedHistory = new ArrayList<Integer>();
 
@@ -74,6 +76,14 @@ public abstract class AgentFirm extends Agent {
 	public void setFabricatedCycle(int fabricatedCycle) {
 		this.fabricatedCycle = fabricatedCycle;
 	}
+	
+	public int getFabricatedLastCycle() {
+		return fabricatedLastCycle;
+	}
+
+	public void setFabricatedLastCycle(int fabricatedLastCycle) {
+		this.fabricatedLastCycle = fabricatedLastCycle;
+	}
 
 	public List<Integer> getFabricatedHistory() {
 		return fabricatedHistory;
@@ -128,22 +138,12 @@ public abstract class AgentFirm extends Agent {
 	
 	protected abstract void processEmployees();
 
-	public int fabricatedTotal(){
-		int i = this.fabricatedHistory.size()-1;
-		if(i >= 1){
-			int value = 0;
-			value = this.fabricatedHistory.get(i);
-			return value;
-		}else{
-			return 0;
+	public int fabricatedTotal(){		
+		int acum = 0;
+		for(int i = 0; i < this.fabricatedHistory.size(); i++){
+			acum = acum + this.fabricatedHistory.get(i);
 		}
-
-		
-//		int acum = 0;
-//		for(int i = 0; i < this.fabricatedHistory.size(); i++){
-//			acum = acum + this.fabricatedHistory.get(i);
-//		}
-//		return acum;
+		return acum;
 	}
 	
 	public void unemployAll(){
