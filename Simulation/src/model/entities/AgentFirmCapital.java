@@ -416,6 +416,18 @@ public class AgentFirmCapital extends AgentFirm {
 		}
 		return response;
 	}
+	
+//	public float getSalesCycle(){
+//		float response = 0F;
+////		Prueba
+//		if(this.salesHistory.size() > 0){
+//			int index = this.salesHistory.size()-1;
+//			response = this.salesHistory.get(index);
+//		}else{
+//			response = 0;
+//		}
+//		return response;
+//	}
 
 
 	public float getLiquidAssets() {

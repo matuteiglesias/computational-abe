@@ -129,11 +129,21 @@ public abstract class AgentFirm extends Agent {
 	protected abstract void processEmployees();
 
 	public int fabricatedTotal(){
-		int acum = 0;
-		for(int i = 0; i < this.fabricatedHistory.size(); i++){
-			acum = acum + this.fabricatedHistory.get(i);
+		int i = this.fabricatedHistory.size()-1;
+		if(i >= 1){
+			int value = 0;
+			value = this.fabricatedHistory.get(i);
+			return value;
+		}else{
+			return 0;
 		}
-		return acum;
+
+		
+//		int acum = 0;
+//		for(int i = 0; i < this.fabricatedHistory.size(); i++){
+//			acum = acum + this.fabricatedHistory.get(i);
+//		}
+//		return acum;
 	}
 	
 	public void unemployAll(){

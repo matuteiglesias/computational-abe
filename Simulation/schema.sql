@@ -1,8 +1,8 @@
--- MySQL dump 10.13  Distrib 5.5.52, for debian-linux-gnu (x86_64)
+-- MySQL dump 10.13  Distrib 5.5.53, for debian-linux-gnu (x86_64)
 --
 -- Host: localhost    Database: simulations
 -- ------------------------------------------------------
--- Server version	5.5.52-0ubuntu0.14.04.1
+-- Server version	5.5.53-0ubuntu0.14.04.1
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -24,11 +24,11 @@ DROP TABLE IF EXISTS `configurations`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `configurations` (
   `id` int(11) NOT NULL DEFAULT '0',
+  `name` varchar(255) DEFAULT NULL,
   `id_experiment` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`,`id_experiment`),
-  KEY `id_experiment` (`id_experiment`),
-  CONSTRAINT `configurations_ibfk_1` FOREIGN KEY (`id_experiment`) REFERENCES `experiments` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+  KEY `id_experiment` (`id_experiment`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -55,11 +55,8 @@ CREATE TABLE `cycles` (
   PRIMARY KEY (`id`,`id_experiment`,`id_configuration`,`id_simulation`),
   KEY `id_simulation` (`id_simulation`),
   KEY `id_configuration` (`id_configuration`),
-  KEY `id_experiment` (`id_experiment`),
-  CONSTRAINT `cycles_ibfk_1` FOREIGN KEY (`id_simulation`) REFERENCES `simulations` (`id`),
-  CONSTRAINT `cycles_ibfk_2` FOREIGN KEY (`id_configuration`) REFERENCES `simulations` (`id_configuration`),
-  CONSTRAINT `cycles_ibfk_3` FOREIGN KEY (`id_experiment`) REFERENCES `experiments` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+  KEY `id_experiment` (`id_experiment`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -82,7 +79,7 @@ CREATE TABLE `experiments` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `date` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -104,7 +101,7 @@ DROP TABLE IF EXISTS `labels`;
 CREATE TABLE `labels` (
   `name` varchar(255) NOT NULL DEFAULT '',
   PRIMARY KEY (`name`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -132,11 +129,8 @@ CREATE TABLE `results` (
   `value` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`name`,`id_experiment`,`id_configuration`,`id_simulation`,`id_cycle`),
   KEY `id_configuration` (`id_configuration`),
-  KEY `id_experiment` (`id_experiment`),
-  CONSTRAINT `results_ibfk_1` FOREIGN KEY (`id_configuration`) REFERENCES `configurations` (`id`),
-  CONSTRAINT `results_ibfk_2` FOREIGN KEY (`name`) REFERENCES `labels` (`name`),
-  CONSTRAINT `results_ibfk_3` FOREIGN KEY (`id_experiment`) REFERENCES `experiments` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+  KEY `id_experiment` (`id_experiment`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -161,10 +155,8 @@ CREATE TABLE `simulations` (
   `id_configuration` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`,`id_experiment`,`id_configuration`),
   KEY `id_configuration` (`id_configuration`),
-  KEY `id_experiment` (`id_experiment`),
-  CONSTRAINT `simulations_ibfk_1` FOREIGN KEY (`id_configuration`) REFERENCES `configurations` (`id`),
-  CONSTRAINT `simulations_ibfk_2` FOREIGN KEY (`id_experiment`) REFERENCES `experiments` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+  KEY `id_experiment` (`id_experiment`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -185,4 +177,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-10-23  0:12:39
+-- Dump completed on 2016-11-22 19:54:23
