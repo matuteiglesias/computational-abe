@@ -58,6 +58,10 @@ public abstract class SimulationController {
 		dao.checkLabel("WAGE");
 		dao.checkLabel("SalesCapitalTotal");
 		dao.checkLabel("SalesConsumerTotal");
+		dao.checkLabel("SalesCapitalTotalNominal");
+		dao.checkLabel("SalesConsumerTotalNominal");
+		dao.checkLabel("ConsumerStockDelta");
+		dao.checkLabel("ConsumerStockDeltaNominal");
 
 		dao.close();
 		//DB - END
@@ -118,6 +122,8 @@ public abstract class SimulationController {
 //		}
 		//DB - END
 		logger.info("\n\nExiting system");
+		
+		return;
 	}
 
 	// marga

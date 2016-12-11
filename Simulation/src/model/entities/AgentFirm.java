@@ -155,4 +155,15 @@ public abstract class AgentFirm extends Agent {
 		
 	}
 	
+	public int soldUnitsCycle(){
+		int response = 0;
+		
+		int size = this.soldUnitsHistory.size();
+		
+		if(size > 1){
+			response = this.soldUnitsHistory.get(size -1);
+		}
+		
+		return response;
+	}
 }

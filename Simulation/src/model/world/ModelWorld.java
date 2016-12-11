@@ -37,7 +37,7 @@ public class ModelWorld extends engine.entities.World {
 	private List<ModelWorldCycle> worldCycles = new ArrayList<ModelWorldCycle>();
 
 	protected float wageCycle;
-	
+
 	private List<Float> wageHistory = new ArrayList<Float>();
 
 	public float consumptionCycle;
@@ -490,6 +490,7 @@ public class ModelWorld extends engine.entities.World {
 						" LIQUID_ASSETS=$"+agentFirm.getLiquidAssets()+
 						" EMPLOYEES_Q= "+agentFirm.getEmployees().size()+
 						" Q0/QL/QK="+agentFirm.getQ0()+"/"+agentFirm.getQl()+"/"+agentFirm.getQk()+
+						" Investment "+agentFirm.getI()+
 						" MARKET_SHARE="+agentFirm.getMarketShareCycle()+
 						" UD="+agentFirm.getUnfilledDemandCycle()+
 						" COMP="+agentFirm.getCompetitivity()+
@@ -541,6 +542,39 @@ public class ModelWorld extends engine.entities.World {
 
 	}
 
+	public int stockConsumerCycle(){
+		int acum = 0;
+
+		for(int i = 0; i < this.consumerFirmAgents.size(); i++){
+			acum = acum + this.consumerFirmAgents.get(i).stockCycle();
+		}
+
+
+		return acum;
+	}
+	
+	public int stockConsumerDeltaCycle(){
+		int acum = 0;
+
+		for(int i = 0; i < this.consumerFirmAgents.size(); i++){
+			acum = acum + this.consumerFirmAgents.get(i).stockDeltaCycle();
+		}
+
+
+		return acum;
+	}
+	
+	public float stockConsumerDeltaNominalCycle(){
+		float acum = 0;
+
+		for(int i = 0; i < this.consumerFirmAgents.size(); i++){
+			acum = acum + this.consumerFirmAgents.get(i).stockDeltaNominalCycle();
+		}
+
+
+		return acum;
+	}
+	
 	private void updateAverageCompetitivity(){
 		float acum = 0F;
 
@@ -672,11 +706,29 @@ public class ModelWorld extends engine.entities.World {
 		return acum;
 	}
 
+	public float salesCapitalCycleTotalNominal(){
+		float acum = 0;
+		for(int i = 0; i < this.capitalFirmAgents.size(); i++){
+			AgentFirmCapital agent = this.capitalFirmAgents.get(i);
+			acum = acum + agent.soldUnitsCycle() * agent.getLastVintage().getPrice();
+		}
+		return acum;
+	}
+
+	public float salesConsumerCycleTotalNominal(){
+		float acum = 0;
+		for(int i = 0; i < this.consumerFirmAgents.size(); i++){
+			AgentFirmConsumer agent = this.consumerFirmAgents.get(i);
+			acum = acum + agent.soldUnitsCycle() * agent.getPrice() ;
+		}
+		return acum;
+	}
+
 	public float salesCapitalCycleTotal(){
 		float acum = 0;
 		for(int i = 0; i < this.capitalFirmAgents.size(); i++){
 			AgentFirmCapital agent = this.capitalFirmAgents.get(i);
-			acum = acum + agent.getFabricatedLastCycle() * agent.getLastVintage().getPrice();
+			acum = acum + agent.soldUnitsCycle();
 		}
 		return acum;
 	}
@@ -685,10 +737,11 @@ public class ModelWorld extends engine.entities.World {
 		float acum = 0;
 		for(int i = 0; i < this.consumerFirmAgents.size(); i++){
 			AgentFirmConsumer agent = this.consumerFirmAgents.get(i);
-			acum = acum + agent.getFabricatedLastCycle() * agent.getPrice() ;
+			acum = acum + agent.soldUnitsCycle();
 		}
 		return acum;
 	}
+
 	
 	public float investmentCapitalTotal(){
 		float acum = 0;

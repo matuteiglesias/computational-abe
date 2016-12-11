@@ -217,6 +217,8 @@ public class SimulationDAO {
 			this.insertValue(psCycleValues, experimentId, configurationId, simulationId, cycleId, "Employed", String.valueOf(world.getEmployedHistory().get(cycleId)));
 			this.insertValue(psCycleValues, experimentId, configurationId, simulationId, cycleId, "FabricatedCapitalTotal", String.valueOf(world.fabricatedCapitalTotal()));
 			this.insertValue(psCycleValues, experimentId, configurationId, simulationId, cycleId, "FabricatedConsumerTotal", String.valueOf(world.fabricatedConsumerTotal()));
+			this.insertValue(psCycleValues, experimentId, configurationId, simulationId, cycleId, "SalesCapitalTotalNominal", String.valueOf(world.salesCapitalCycleTotalNominal()));
+			this.insertValue(psCycleValues, experimentId, configurationId, simulationId, cycleId, "SalesConsumerTotalNominal", String.valueOf(world.salesConsumerCycleTotalNominal()));		
 			this.insertValue(psCycleValues, experimentId, configurationId, simulationId, cycleId, "SalesCapitalTotal", String.valueOf(world.salesCapitalCycleTotal()));
 			this.insertValue(psCycleValues, experimentId, configurationId, simulationId, cycleId, "SalesConsumerTotal", String.valueOf(world.salesConsumerCycleTotal()));		
 			this.insertValue(psCycleValues, experimentId, configurationId, simulationId, cycleId, "InvestmentCapital", String.valueOf(world.investmentCapitalTotal()));
@@ -230,6 +232,9 @@ public class SimulationDAO {
 			this.insertValue(psCycleValues, experimentId, configurationId, simulationId, cycleId, "Capital_Bankrupts", String.valueOf(world.getCapitalBankruptHistory().get(cycleId)));
 			this.insertValue(psCycleValues, experimentId, configurationId, simulationId, cycleId, "Consumer_Bankrupts", String.valueOf(world.getConsumerBankruptHistory().get(cycleId)));
 			this.insertValue(psCycleValues, experimentId, configurationId, simulationId, cycleId, "WAGE", String.valueOf(world.getWageHistory().get(cycleId)));
+			this.insertValue(psCycleValues, experimentId, configurationId, simulationId, cycleId, "ConsumerStockDelta", String.valueOf(world.stockConsumerDeltaCycle()));
+			this.insertValue(psCycleValues, experimentId, configurationId, simulationId, cycleId, "ConsumerStockDeltaNominal", String.valueOf(world.stockConsumerDeltaNominalCycle()));
+
 //			logger.info(Thread.currentThread().getName()+" QUERY"+ psCycleValues.toString());
 //			psCycleValues.executeBatch();
 

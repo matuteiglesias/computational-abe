@@ -10,10 +10,10 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       158,          7]
-NotebookDataLength[     27666,        812]
-NotebookOptionsPosition[     26416,        765]
-NotebookOutlinePosition[     26754,        780]
-CellTagsIndexPosition[     26711,        777]
+NotebookDataLength[     27455,        812]
+NotebookOptionsPosition[     26202,        765]
+NotebookOutlinePosition[     26543,        780]
+CellTagsIndexPosition[     26500,        777]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
@@ -477,17 +477,17 @@ Cell[CellGroupData[{
 
 Cell[BoxData[{
  RowBox[{
-  RowBox[{"m", "=", "13"}], ";"}], "\[IndentingNewLine]", 
+  RowBox[{"m", "=", "10"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"t", "=", 
+   RowBox[{"Tuples", "[", 
+    RowBox[{
+     RowBox[{"Range", "[", "m", "]"}], ",", 
+     RowBox[{"{", "3", "}"}]}], "]"}]}], ";"}], "\[IndentingNewLine]", 
  RowBox[{
   RowBox[{
    RowBox[{"t", "=", 
-    RowBox[{"Tuples", "[", 
-     RowBox[{
-      RowBox[{"Range", "[", "m", "]"}], ",", 
-      RowBox[{"{", "3", "}"}]}], "]"}]}], ";"}], "\[IndentingNewLine]", 
-  RowBox[{"(*", 
-   RowBox[{
-    RowBox[{"t", "=", 
+    RowBox[{
      RowBox[{
       RowBox[{"Tuples", "[", 
        RowBox[{
@@ -512,7 +512,8 @@ Cell[BoxData[{
                 RowBox[{"[", "2", "]"}], "]"}]}], "<=", 
               RowBox[{"#", "[", 
                RowBox[{"[", "3", "]"}], "]"}]}], "&"}], ")"}]}]}], "]"}], "//",
-         "Flatten"}], "]"}], "]"}]}], ";"}], "*)"}], "\[IndentingNewLine]", 
+         "Flatten"}], "]"}], "]"}], "//", "Quiet"}]}], ";"}], 
+  "\[IndentingNewLine]", 
   RowBox[{"(*", 
    RowBox[{
     RowBox[{"p", "=", 
@@ -575,16 +576,12 @@ Cell[BoxData[{
      RowBox[{
       RowBox[{"{", "params", "}"}], ",", "f"}], "]"}]}], "]"}], 
   ";"}]}], "Input",
- CellChangeTimes->{{3.684742607947304*^9, 3.684742616831922*^9}, {
-   3.684743472035616*^9, 3.6847434927826157`*^9}, {3.6850246680269327`*^9, 
-   3.685024716167952*^9}, {3.685024749133165*^9, 3.685024838899088*^9}, 
-   3.685025066703631*^9, {3.685027463772357*^9, 3.685027463896413*^9}, {
-   3.685029855176427*^9, 3.68502987352747*^9}, {3.685168399517498*^9, 
-   3.6851684849993677`*^9}, {3.685168710219208*^9, 3.685168724636512*^9}}],
+ CellChangeTimes->{{3.688905502465569*^9, 3.688905515707982*^9}, {
+  3.688905654335524*^9, 3.688905688255787*^9}}],
 
-Cell[BoxData["2197"], "Output",
- CellChangeTimes->{{3.68516845715403*^9, 3.685168487874671*^9}, 
-   3.6851686616267443`*^9, 3.685168732749651*^9}]
+Cell[BoxData["165"], "Output",
+ CellChangeTimes->{{3.68890549347748*^9, 3.688905516096438*^9}, {
+  3.6889056546581907`*^9, 3.688905693293454*^9}}]
 }, Open  ]],
 
 Cell[CellGroupData[{
@@ -597,30 +594,32 @@ Cell[BoxData[{
  RowBox[{
   RowBox[{"t", "=", 
    RowBox[{
-    RowBox[{"Tuples", "[", 
-     RowBox[{
-      RowBox[{"Range", "[", "m", "]"}], ",", 
-      RowBox[{"{", "3", "}"}]}], "]"}], "[", 
-    RowBox[{"[", 
-     RowBox[{
-      RowBox[{"Position", "[", 
-       RowBox[{
-        RowBox[{"Tuples", "[", 
-         RowBox[{
-          RowBox[{"Range", "[", "m", "]"}], ",", 
-          RowBox[{"{", "3", "}"}]}], "]"}], ",", 
-        RowBox[{"_", "?", 
-         RowBox[{"(", 
+    RowBox[{
+     RowBox[{"Tuples", "[", 
+      RowBox[{
+       RowBox[{"Range", "[", "m", "]"}], ",", 
+       RowBox[{"{", "3", "}"}]}], "]"}], "[", 
+     RowBox[{"[", 
+      RowBox[{
+       RowBox[{"Position", "[", 
+        RowBox[{
+         RowBox[{"Tuples", "[", 
           RowBox[{
+           RowBox[{"Range", "[", "m", "]"}], ",", 
+           RowBox[{"{", "3", "}"}]}], "]"}], ",", 
+         RowBox[{"_", "?", 
+          RowBox[{"(", 
            RowBox[{
             RowBox[{
+             RowBox[{
+              RowBox[{"#", "[", 
+               RowBox[{"[", "1", "]"}], "]"}], "+", 
+              RowBox[{"#", "[", 
+               RowBox[{"[", "2", "]"}], "]"}]}], "<=", 
              RowBox[{"#", "[", 
-              RowBox[{"[", "1", "]"}], "]"}], "+", 
-             RowBox[{"#", "[", 
-              RowBox[{"[", "2", "]"}], "]"}]}], "<=", 
-            RowBox[{"#", "[", 
-             RowBox[{"[", "3", "]"}], "]"}]}], "&"}], ")"}]}]}], "]"}], "//", 
-      "Flatten"}], "]"}], "]"}]}], ";"}], "\[IndentingNewLine]", 
+              RowBox[{"[", "3", "]"}], "]"}]}], "&"}], ")"}]}]}], "]"}], "//",
+        "Flatten"}], "]"}], "]"}], "//", "Quiet"}]}], 
+  ";"}], "\[IndentingNewLine]", 
  RowBox[{"Length", "[", "t", "]"}], "\[IndentingNewLine]", 
  RowBox[{
   RowBox[{"p", "=", 
@@ -684,7 +683,8 @@ Cell[BoxData[{
   3.685186659477294*^9}, {3.685188348006587*^9, 3.68518834809231*^9}, {
   3.6852006748795013`*^9, 3.685200692470313*^9}, {3.6852069504129972`*^9, 
   3.6852070331269197`*^9}, {3.685639714873074*^9, 3.685639715558878*^9}, {
-  3.6862156491514263`*^9, 3.686215651771324*^9}}],
+  3.6862156491514263`*^9, 3.686215651771324*^9}, {3.688905471326933*^9, 
+  3.688905472568944*^9}}],
 
 Cell[BoxData[
  RowBox[{
@@ -764,7 +764,7 @@ Cell[BoxData["20825"], "Output",
 }, Open  ]]
 },
 WindowSize->{927, 1028},
-WindowMargins->{{Automatic, -10}, {Automatic, -10}},
+WindowMargins->{{-1002, Automatic}, {1070, Automatic}},
 FrontEndVersion->"10.1 for Linux x86 (64-bit) (March 23, 2015)",
 StyleDefinitions->"Default.nb"
 ]
@@ -801,16 +801,16 @@ Cell[CellGroupData[{
 Cell[13023, 382, 219, 3, 45, "Subsection"],
 Cell[13245, 387, 3047, 86, 165, "Input"],
 Cell[CellGroupData[{
-Cell[16317, 477, 3398, 105, 297, "Input"],
-Cell[19718, 584, 146, 2, 32, "Output"]
+Cell[16317, 477, 3078, 102, 341, "Input"],
+Cell[19398, 581, 146, 2, 32, "Output"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[19901, 591, 3095, 95, 275, "Input"],
-Cell[22999, 688, 776, 15, 23, "Message"],
-Cell[23778, 705, 776, 15, 23, "Message"],
-Cell[24557, 722, 776, 15, 23, "Message"],
-Cell[25336, 739, 794, 15, 23, "Message"],
-Cell[26133, 756, 243, 4, 32, "Output"]
+Cell[19581, 588, 3201, 98, 319, "Input"],
+Cell[22785, 688, 776, 15, 23, "Message"],
+Cell[23564, 705, 776, 15, 23, "Message"],
+Cell[24343, 722, 776, 15, 23, "Message"],
+Cell[25122, 739, 794, 15, 23, "Message"],
+Cell[25919, 756, 243, 4, 32, "Output"]
 }, Open  ]]
 }, Open  ]]
 }, Open  ]]

@@ -39,6 +39,12 @@ public class AgentFirmConsumer extends AgentFirm {
 
 	private List<Float> investmentHistory = new ArrayList<Float>();
 
+	private List<Integer> stockHistory = new ArrayList<Integer>();
+
+	private List<Integer> stockDeltaHistory = new ArrayList<Integer>();
+
+	private List<Float> stockDeltaNominalHistory = new ArrayList<Float>();
+
 	public AgentFirmConsumerStock getStock() {
 		return stock;
 	}
@@ -140,13 +146,79 @@ public class AgentFirmConsumer extends AgentFirm {
 		this.demandUnitsHistory = demandUnitsHistory;
 	}
 
+	public List<Integer> getStockHistory() {
+		return stockHistory;
+	}
+
+	public void setStockHistory(List<Integer> stockHistory) {
+		this.stockHistory = stockHistory;
+	}
+
+	public List<Integer> getStockDeltaHistory() {
+		return stockDeltaHistory;
+	}
+
+	public void setStockDeltaHistory(List<Integer> stockDeltaHistory) {
+		this.stockDeltaHistory = stockDeltaHistory;
+	}
+
+	public List<Float> getStockDeltaNominalHistory() {
+		return stockDeltaNominalHistory;
+	}
+
+	public void setStockDeltaNominalHistory(List<Float> stockDeltaNominalHistory) {
+		this.stockDeltaNominalHistory = stockDeltaNominalHistory;
+	}
+
+	/*******/
 	@Override
 	public AgentDTO runCycle() {
 		this.runPayroll();
 		this.processEmployees();
 		this.brochuresProcess();
 		this.processFabrication();
+		this.updateStockHistory();
 		return null;
+	}
+
+	private void updateStockHistory(){
+		this.stockHistory.add(this.stock.getStockAvailable());
+		
+		logger.info("STOCKKKKKKKKKKKKKKKKKKKKKK "+this.stock.getStockAvailable());
+		
+		int size = this.stockHistory.size();
+		if(size > 1){
+			int delta =  this.stockHistory.get(size - 1) - this.stockHistory.get(size - 2);
+			this.stockDeltaHistory.add(delta);
+			
+			float deltaNominal = Math.max(0F, delta * this.getCostUnit());
+			this.stockDeltaNominalHistory.add(deltaNominal);
+		}
+
+	}
+
+	public int stockCycle(){
+		return this.stockHistory.get(this.stockHistory.size());
+	}
+
+	public int stockDeltaCycle(){
+		int response = 0;
+		int size = this.stockDeltaHistory.size();
+		if(size > 0){
+			response = this.stockDeltaHistory.get(size - 1);
+		}
+
+		return response;
+	}
+
+	public float stockDeltaNominalCycle(){
+		int response = 0;
+		int size = this.stockDeltaNominalHistory.size();
+		if(size > 0){
+		return this.stockDeltaNominalHistory.get(size - 1);
+		}
+		
+		return response;
 	}
 
 	public void processPL(){
@@ -167,16 +239,16 @@ public class AgentFirmConsumer extends AgentFirm {
 			this.world.getGovernment().payFirmTax(taxes);
 			//			//logger.info("PAY TAXES");
 		}
-		
-		float salesproy = this.getSalesCycle();
 
 		this.fabricatedLastCycle = this.fabricatedCycle;
-		
+
+		float salesproy = this.getSalesCycle();
+
 		this.soldUnitsCycle = 0;
 		this.salesCycle = 0;
 		this.costCycle = 0;
 		this.fabricatedCycle = 0;
-		
+
 		float NW = this.getLiquidAssets();
 
 		if(NW + 2 * salesproy < 0){
@@ -217,7 +289,7 @@ public class AgentFirmConsumer extends AgentFirm {
 
 		if(this.machines.size() > 0){
 			float costAcum = 0F;
-			float costUnit = this.getCost();
+			float costUnit = this.getCostUnit();
 			//		this.costCycle = this.getCost();
 
 			for(int i = 0; i < fabricate; i++){
@@ -235,14 +307,14 @@ public class AgentFirmConsumer extends AgentFirm {
 		}
 	}
 
-	public float getCost(){
+	public float getCostUnit(){
 		return this.world.getWageCycle() / this.getMachinesProductivityAverage();
 
 	}
 	public float getPrice(){
 
-		float cost = this.getCost();
-		float price = cost * (1 + this.world.getParameters().AGENT_FIRM_CAPITAL_MARGIN);
+		float cost = this.getCostUnit();
+		float price = cost * (1 + this.world.getParameters().AGENT_FIRM_CONSUMER_MARGIN);
 
 		return price;
 	}
@@ -409,7 +481,7 @@ public class AgentFirmConsumer extends AgentFirm {
 						request.toReplace = existingGood;
 						brochure.manufacturer.requestOrderCreate(request);
 						investReplace = investReplace + brochure.vintage.getPrice();
-						
+
 					}
 
 				}
@@ -460,9 +532,9 @@ public class AgentFirmConsumer extends AgentFirm {
 		float pay = 0F;
 		GoodCapital goodCapital = order.getNewGood();
 		this.machines.add(goodCapital);
-		
-//		pay = goodCapital.getGoodCapitalVintage().getPrice();
-//		this.liquidAssets = this.liquidAssets - pay;
+
+		//		pay = goodCapital.getGoodCapitalVintage().getPrice();
+		//		this.liquidAssets = this.liquidAssets - pay;
 		goodCapital.setAgent(this);
 
 		if(order.getToReplace() != null){
