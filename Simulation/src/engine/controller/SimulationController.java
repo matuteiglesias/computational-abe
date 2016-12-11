@@ -83,12 +83,12 @@ public abstract class SimulationController {
 		
 		
 		BlockingQueue<ParametersConfiguration> sharedQueue = new LinkedBlockingQueue<ParametersConfiguration>();
-        ExecutorService executor = Executors.newFixedThreadPool(2);
+        ExecutorService executor = Executors.newFixedThreadPool(3);
         
         Runnable producer = new ConfigurationProducer(sharedQueue, experimentId, configRuns);
-        Thread thread = new Thread(producer);
-        thread.start();
-//		executor.execute(producer); 
+//        Thread thread = new Thread(producer);
+//        thread.start();
+		executor.execute(producer); 
 		
         for(int i = 0; i < 2; i++){
     		Runnable consumer = new ConfigurationConsumer(sharedQueue);
@@ -116,10 +116,10 @@ public abstract class SimulationController {
 		
 				
 		//DB - START
-//		executor.shutdown();
-//		while(executor.isTerminated()){
-//			ConnectionPool.getConnectionPool().closeConnections();
-//		}
+		executor.shutdown();
+		while(executor.isTerminated()){
+			ConnectionPool.getConnectionPool().closeConnections();
+		}
 		//DB - END
 		logger.info("\n\nExiting system");
 		

@@ -44,7 +44,9 @@ public class ConfigurationProducer implements Runnable{
 			Logger.getLogger(ConfigurationProducer.class.getName()).log(Level.SEVERE, null, e);
 
 		}
-
+		
+		return;
+		
 	}
 
 
