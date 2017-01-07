@@ -184,7 +184,7 @@ public class AgentFirmConsumer extends AgentFirm {
 	private void updateStockHistory(){
 		this.stockHistory.add(this.stock.getStockAvailable());
 		
-		logger.info("STOCKKKKKKKKKKKKKKKKKKKKKK "+this.stock.getStockAvailable());
+	//	logger.info("STOCKKKKKKKKKKKKKKKKKKKKKK "+this.stock.getStockAvailable());
 		
 		int size = this.stockHistory.size();
 		if(size > 1){

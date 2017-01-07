@@ -2,7 +2,9 @@ package model.world;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 
 import model.dtos.AgentDTO;
@@ -67,6 +69,20 @@ public class ModelWorld extends engine.entities.World {
 	private float prodABCycle;
 
 	private List<Float> prodABHistory = new ArrayList<Float>();
+	
+	private Map<ProductivityEnum, Integer> productivityVector = new HashMap<ProductivityEnum, Integer>();
+	
+	public enum ProductivityEnum{
+//		NO10,
+		NO01,
+		IN100,
+//		IN010,
+		IN001,
+		IM100,
+//		IM010,
+		IM001
+	}
+	
 
 	/*******/
 
@@ -262,9 +278,18 @@ public class ModelWorld extends engine.entities.World {
 		this.prodABHistory = prodABHistory;
 	}
 
+	public Map<ProductivityEnum, Integer> getProductivityVector() {
+		return productivityVector;
+	}
+
+	public void setProductivityVector(Map<ProductivityEnum, Integer> productivityVector) {
+		this.productivityVector = productivityVector;
+	}
+
 	/********/
 
 	public ModelWorld(ModelParametersSimulation parameters){
+		
 		this.parameters = parameters;
 		this.government = new AgentGovernment();
 		this.government.setId(idAgentCounter++);
@@ -407,7 +432,13 @@ public class ModelWorld extends engine.entities.World {
 
 
 	public ModelWorldCycle runCycle(){
-
+		
+		productivityVector.put(ProductivityEnum.NO01, 0);
+		productivityVector.put(ProductivityEnum.IN100, 0);
+		productivityVector.put(ProductivityEnum.IN001, 0);
+		productivityVector.put(ProductivityEnum.IM100, 0);
+		productivityVector.put(ProductivityEnum.IM001, 0);
+		
 		ModelWorldCycle worldCycle = new ModelWorldCycle();
 		//		logger.info("RUNNING CYCLE "+this.cycle);
 		for(int i = 0; i < this.agents.size(); i++){
@@ -936,5 +967,17 @@ public class ModelWorld extends engine.entities.World {
 		response = (this.consumerEMP() * this.averageProdAEMP() + this.capitalEMP() * this.averageProdBEMP())/(this.consumerEMP() + this.capitalEMP());
 		this.prodABCycle = response;
 		return response;
+	}
+	
+	public String getProductivitySum(){
+		StringBuilder response = new StringBuilder();
+		response.append("{");
+		response.append(this.productivityVector.get(ProductivityEnum.NO01)+",");
+		response.append(this.productivityVector.get(ProductivityEnum.IN100)+",");
+		response.append(this.productivityVector.get(ProductivityEnum.IN001)+",");
+		response.append(this.productivityVector.get(ProductivityEnum.IM100)+",");
+		response.append(this.productivityVector.get(ProductivityEnum.IM001));
+		response.append("}");
+		return response.toString();
 	}
 }

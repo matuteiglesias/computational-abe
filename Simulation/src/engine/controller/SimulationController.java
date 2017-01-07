@@ -62,6 +62,9 @@ public abstract class SimulationController {
 		dao.checkLabel("SalesConsumerTotalNominal");
 		dao.checkLabel("ConsumerStockDelta");
 		dao.checkLabel("ConsumerStockDeltaNominal");
+		dao.checkLabel("GovermentBalance");
+		dao.checkLabel("Technology");
+
 
 		dao.close();
 		//DB - END

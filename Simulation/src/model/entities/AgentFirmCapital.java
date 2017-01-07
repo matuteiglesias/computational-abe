@@ -8,8 +8,9 @@ import java.util.logging.Logger;
 import model.dtos.AgentDTO;
 import model.dtos.BrochureDTO;
 import model.dtos.OrderRequestDTO;
-import model.parameters.ModelParametersSimulation;
 import model.utils.StdRandom;
+import model.world.ModelWorld;
+import model.world.ModelWorld.ProductivityEnum;
 
 
 public class AgentFirmCapital extends AgentFirm {
@@ -26,7 +27,31 @@ public class AgentFirmCapital extends AgentFirm {
 	private List<AgentFirmCapitalOrderRequest> requestOrders = new ArrayList<AgentFirmCapitalOrderRequest>();
 
 	private float productivityB;
-
+	
+//	private Map<ProductivityEnum, Integer> productivityVector = new HashMap<ProductivityEnum, Integer>();
+//	
+//	public enum ProductivityEnum{
+////		NO10,
+//		NO01,
+//		IN100,
+////		IN010,
+//		IN001,
+//		IM100,
+////		IM010,
+//		IM001
+//	}
+//	
+//	public AgentFirmCapital(){
+////		productivityVector.put(ProductivityEnum.NO10, 0);
+//		productivityVector.put(ProductivityEnum.NO01, 0);
+//		productivityVector.put(ProductivityEnum.IN100, 0);
+////		productivityVector.put(ProductivityEnum.IN010, 0);
+//		productivityVector.put(ProductivityEnum.IN001, 0);
+//		productivityVector.put(ProductivityEnum.IM100, 0);
+////		productivityVector.put(ProductivityEnum.IM010, 0);
+//		productivityVector.put(ProductivityEnum.IM001, 0);
+//
+//	}
 
 	/********/
 
@@ -124,8 +149,14 @@ public class AgentFirmCapital extends AgentFirm {
 	public void runPromote(){
 
 	}
-
-
+//
+//	public Map<ProductivityEnum, Integer> getProductivityVector() {
+//		return productivityVector;
+//	}
+//
+//	public void setProductivityVector(Map<ProductivityEnum, Integer> productivityVector) {
+//		this.productivityVector = productivityVector;
+//	}
 
 	private void researchCapitalGoodVintage(){
 		//	//logger.info(this.id+" investment: "+this.getI());
@@ -136,79 +167,92 @@ public class AgentFirmCapital extends AgentFirm {
 		float IM = (1-this.world.getParameters().AGENT_FIRM_CAPITAL_FRACTION_X)* this.getI();		
 		float pIM = (float) (1 - Math.exp(- this.world.getParameters().AGENT_FIRM_CAPITAL_Z_IM * IM));
 
-//		logger.info("pIN = "+pIN+"pIM = "+pIM);
-		
 		this.liquidAssets = this.liquidAssets - this.getI();
 
+		float innovA = Float.MIN_VALUE;
+		float innovB = Float.MIN_VALUE;
+		float imitA = Float.MIN_VALUE;
+		float imitB = Float.MIN_VALUE;
+		float chosenScore = 0F;
 
-		float vintageI = 0F;
 		if(StdRandom.bernoulli(pIN)){
 			//		//logger.info(this.id+" INNOV");
 
-			float min = 0.9F;
-			float max = 1.1F;
-			float sigma = (float) (0.2 * (max - min));
-
-			vintageI = (1 + (float) StdRandom.gaussian(0, sigma)) * this.lastVintage.getProductivityA();
-			}
+			float sigma = 0.05F;
+			innovA = (float) StdRandom.gaussian(1, sigma) * this.lastVintage.getProductivityA();
+			innovB = (float) StdRandom.gaussian(1, sigma) * this.productivityB;
+			
+		}else{				
+			Integer actualValue = world.getProductivityVector().get(ModelWorld.ProductivityEnum.IN100);
+			world.getProductivityVector().put(ModelWorld.ProductivityEnum.IN100, actualValue + 1);
+		}
 		
-		float vintageIM = 0F;
 		if(StdRandom.bernoulli(pIM)){
 
-			float aux = 0F;
 			List<AgentFirmCapital> capitals = this.world.getCapitalFirmAgents();
-			//		//logger.info(this.id+" IMIT");
 
 			boolean success = false;
-			int iter = 0;
-			while(!success && iter < this.world.getParameters().AGENT_FIRM_CAPITAL_Q){
-				iter++;
+			while(!success && 1 < this.world.getParameters().AGENT_FIRM_CAPITAL_Q){
 				int minIndex = 0;
 				int maxIndex = capitals.size() - 1;
 				int index = minIndex + (int)(Math.random() * ((maxIndex - minIndex) + 1));
 				AgentFirmCapital capital = capitals.get(index);
 
 				if(capital != this){
-					aux = capital.getLastVintage().getProductivityA();
+					imitA = capital.getLastVintage().getProductivityA();
+					imitB = capital.productivityB;
 					success = true;
 				}
 			}
 
-			if(aux > 0){
-				float ratio = aux / this.lastVintage.getProductivityA();
+		}else{
+			Integer actualValue = world.getProductivityVector().get(ModelWorld.ProductivityEnum.IM100);
+			 world.getProductivityVector().put(ModelWorld.ProductivityEnum.IM100, actualValue + 1);
+		}
+		
+		float score0;
+		float scoreInnov;
+		float scoreImit;
+		score0 = (1+this.world.getParameters().AGENT_FIRM_CAPITAL_MARGIN)/this.productivityB + this.world.getParameters().AGENT_FIRM_CONSUMER_PAYBACK_PERIOD/this.getLastVintage().getProductivityA();
+		scoreInnov = (1+this.world.getParameters().AGENT_FIRM_CAPITAL_MARGIN)/innovB + this.world.getParameters().AGENT_FIRM_CONSUMER_PAYBACK_PERIOD/innovA;
+		scoreImit = (1+this.world.getParameters().AGENT_FIRM_CAPITAL_MARGIN)/imitB + this.world.getParameters().AGENT_FIRM_CONSUMER_PAYBACK_PERIOD/imitA;
+		
+		chosenScore = Math.min(scoreInnov, scoreImit);
 
-				if(ratio > 1F /*&& ratio < 1.2F*/){
-					vintageIM = aux;
-				}
-			}
-
-			float productivityFinal = Math.max(vintageI, vintageIM);
-
-			if(productivityFinal > this.lastVintage.getProductivityA()){
+		if(chosenScore < score0){
+			if(chosenScore == scoreInnov){
+				
+				Integer actualValue =  world.getProductivityVector().get(ModelWorld.ProductivityEnum.IN001);
+				world.getProductivityVector().put(ModelWorld.ProductivityEnum.IN001, actualValue + 1);
+				
 				GoodCapitalVintage vintage = new GoodCapitalVintage();
-				vintage.setProductivityA(productivityFinal);
-
+				vintage.setProductivityA(innovA);
+				this.productivityB = innovB;
 				float cost = this.world.getWageCycle() / this.productivityB;
 				float price = cost * (1 + this.world.getParameters().AGENT_FIRM_CAPITAL_MARGIN);
 				vintage.setPrice(price);
-
+				this.capitalGoodVintage.add(vintage);
+				this.lastVintage = vintage;
+				
+			}else{
+				
+				Integer actualValue =  world.getProductivityVector().get(ModelWorld.ProductivityEnum.IM001);
+				world.getProductivityVector().put(ModelWorld.ProductivityEnum.IM001, actualValue + 1);
+				
+				GoodCapitalVintage vintage = new GoodCapitalVintage();
+				vintage.setProductivityA(imitA);
+				this.productivityB = imitB;
+				float cost = this.world.getWageCycle() / this.productivityB;
+				float price = cost * (1 + this.world.getParameters().AGENT_FIRM_CAPITAL_MARGIN);
+				vintage.setPrice(price);
 				this.capitalGoodVintage.add(vintage);
 				this.lastVintage = vintage;
 			}
-		}
+			
 
-	}
-
-	private void researchProductivityB(){
-
-		float min = 0.98F;
-		float max = 1.02F;
-		float sigma = (float) (0.2 * (max - min));
-
-		float improvement = 1 + (float) StdRandom.gaussian(0, sigma);
-
-		if(improvement * this.productivityB  > this.productivityB){
-			this.productivityB = improvement * this.productivityB;
+		}else{
+			Integer actualValue =  world.getProductivityVector().get(ModelWorld.ProductivityEnum.NO01);
+			 world.getProductivityVector().put(ModelWorld.ProductivityEnum.NO01, actualValue + 1);
 		}
 	}
 
@@ -218,8 +262,6 @@ public class AgentFirmCapital extends AgentFirm {
 		this.runPayroll();
 		this.processEmployees();
 		this.researchCapitalGoodVintage();
-		this.researchProductivityB();
-		// bankrupt
 
 		return null;
 

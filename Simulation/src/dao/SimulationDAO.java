@@ -234,6 +234,8 @@ public class SimulationDAO {
 			this.insertValue(psCycleValues, experimentId, configurationId, simulationId, cycleId, "WAGE", String.valueOf(world.getWageHistory().get(cycleId)));
 			this.insertValue(psCycleValues, experimentId, configurationId, simulationId, cycleId, "ConsumerStockDelta", String.valueOf(world.stockConsumerDeltaCycle()));
 			this.insertValue(psCycleValues, experimentId, configurationId, simulationId, cycleId, "ConsumerStockDeltaNominal", String.valueOf(world.stockConsumerDeltaNominalCycle()));
+			this.insertValue(psCycleValues, experimentId, configurationId, simulationId, cycleId, "GovermentBalance", String.valueOf(world.getGovernment().getLiquidAssets()));
+			this.insertValue(psCycleValues, experimentId, configurationId, simulationId, cycleId, "Technology", String.valueOf(world.getProductivitySum()));
 
 //			logger.info(Thread.currentThread().getName()+" QUERY"+ psCycleValues.toString());
 //			psCycleValues.executeBatch();
