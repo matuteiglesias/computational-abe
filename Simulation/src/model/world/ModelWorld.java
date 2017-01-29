@@ -20,6 +20,7 @@ import model.entities.GoodCapital;
 import model.entities.GoodCapitalVintage;
 import model.entities.GoodConsumer;
 import model.parameters.ModelParametersSimulation;
+import model.world.ModelWorld.ProductivityEnum;
 
 public class ModelWorld extends engine.entities.World {
 	private static final Logger logger = Logger.getLogger( ModelWorld.class.getName() + " Model" );
@@ -288,6 +289,9 @@ public class ModelWorld extends engine.entities.World {
 
 	/********/
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	
 	public ModelWorld(ModelParametersSimulation parameters){
 		
 		this.parameters = parameters;
@@ -326,6 +330,10 @@ public class ModelWorld extends engine.entities.World {
 
 	}
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	
+	
 	public float getGoodCapitalVintageProductivityA(){
 		float min = parameters.AGENT_FIRM_CAPITAL_PRODUCTIVITY_A_MIN;
 		float max = parameters.AGENT_FIRM_CAPITAL_PRODUCTIVITY_A_MAX;
@@ -341,6 +349,7 @@ public class ModelWorld extends engine.entities.World {
 		float random = min + (float)(Math.random() * (max - min));
 		return random;
 	}
+	
 
 	public float getCapitalFirmNW(){
 		return parameters.AGENT_FIRM_CAPITAL_NW;
@@ -429,6 +438,9 @@ public class ModelWorld extends engine.entities.World {
 
 
 	}
+	
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 	public ModelWorldCycle runCycle(){
@@ -480,6 +492,11 @@ public class ModelWorld extends engine.entities.World {
 				}
 			}
 		}
+		
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 		// SECOND ITERATION FOR CAPITAL FIRM
 		for(int i = 0; i < this.capitalFirmAgents.size(); i++){
@@ -572,6 +589,70 @@ public class ModelWorld extends engine.entities.World {
 		return worldCycle;
 
 	}
+	
+	public float ipc(){
+		float response = 0F;
+
+		float acum = 0F;
+		for(int i = 0; i < this.consumerFirmAgents.size(); i++){
+			AgentFirmConsumer consumer = this.consumerFirmAgents.get(i);
+
+			acum = acum + (consumer.getMarketShareCycle() * consumer.getPrice());
+		}
+
+		response = acum / this.marketShareSumGet();
+		this.ipcCycle = response;
+		return response;
+	}
+	
+	public float prodAB(){
+		float response = 0F;
+
+		response = (this.consumerEMP() * this.averageProdAEMP() + this.capitalEMP() * this.averageProdBEMP())/(this.consumerEMP() + this.capitalEMP());
+		this.prodABCycle = response;
+		return response;
+	}
+	
+	public float consumerEMP(){
+		float response = 0F;
+
+		float total = 0F;
+		for(int i = 0; i < this.consumerFirmAgents.size(); i++){
+			AgentFirmConsumer consumer = this.consumerFirmAgents.get(i);
+			total = total + consumer.getEmployees().size();
+		}
+
+		response =  total;
+		return response;
+	}
+	
+	public float capitalEMP(){
+		float response = 0F;
+
+		float total = 0F;
+		for(int i = 0; i < this.capitalFirmAgents.size(); i++){
+			AgentFirmCapital capital = this.capitalFirmAgents.get(i);
+			total = total + capital.getEmployees().size();
+		}
+
+		response = total;
+		return response;
+	}
+	
+	public float averageProdBEMP(){
+		float response = 0F;
+
+		float acum = 0F;
+		float total = 0F;
+		for(int i = 0; i < this.capitalFirmAgents.size(); i++){
+			AgentFirmCapital capital = this.capitalFirmAgents.get(i);
+			total = total + capital.getEmployees().size();
+			acum = acum + (capital.getEmployees().size() * capital.getProductivityB());
+		}
+
+		response = acum / total;
+		return response;
+	}
 
 	public int stockConsumerCycle(){
 		int acum = 0;
@@ -648,13 +729,7 @@ public class ModelWorld extends engine.entities.World {
 		}
 	}
 
-	private float marketShareSumGet(){
-		float response = 0F;
-		for(int i = 0; i < this.consumerFirmAgents.size(); i++){
-			response = response + this.consumerFirmAgents.get(i).getMarketShareCycle();
-		}
-		return response;
-	}
+
 
 	private float consumptionUpdate(){
 		float response = 0F;
@@ -709,16 +784,7 @@ public class ModelWorld extends engine.entities.World {
 		return average;
 	}
 
-	public float averageProductivityAConsumer(){
-		float acum = 0F;
-		float average = 0F;
-		for(int i = 0; i < this.consumerFirmAgents.size(); i++){
-			AgentFirmConsumer agentFirm = this.consumerFirmAgents.get(i);
-			acum = acum + agentFirm.getMachinesProductivityAverage();
-		}
-		average = acum / this.consumerFirmAgents.size();
-		return average;
-	}
+
 
 	public int fabricatedCapitalTotal(){
 		int acum = 0;
@@ -856,23 +922,7 @@ public class ModelWorld extends engine.entities.World {
 
 		}
 	}
-
-	public float averageProdAMS(){
-		float response = 0F;
-
-		float averageAConsume = this.averageProductivityAConsumer();
-
-		float acum = 0F;
-		for(int i = 0; i < this.consumerFirmAgents.size(); i++){
-			AgentFirmConsumer consumer = this.consumerFirmAgents.get(i);
-
-			acum = acum + (consumer.getMarketShareCycle() * averageAConsume);
-		}
-
-		response = acum / this.marketShareSumGet();
-		return response;
-	}
-
+	
 	public float averageProdAEMP(){
 		float response = 0F;
 
@@ -890,6 +940,22 @@ public class ModelWorld extends engine.entities.World {
 		return response;
 	}
 
+	public float averageProdAMS(){
+		float response = 0F;
+
+		float averageAConsume = this.averageProductivityAConsumer();
+
+		float acum = 0F;
+		for(int i = 0; i < this.consumerFirmAgents.size(); i++){
+			AgentFirmConsumer consumer = this.consumerFirmAgents.get(i);
+
+			acum = acum + (consumer.getMarketShareCycle() * averageAConsume);
+		}
+
+		response = acum / this.marketShareSumGet();
+		return response;
+	}
+	
 	public float averageProdBMS(){
 		float response = 0F;
 
@@ -904,70 +970,29 @@ public class ModelWorld extends engine.entities.World {
 		response = acum / total;
 		return response;
 	}
-
-	public float averageProdBEMP(){
+	
+	private float marketShareSumGet(){
 		float response = 0F;
-
-		float acum = 0F;
-		float total = 0F;
-		for(int i = 0; i < this.capitalFirmAgents.size(); i++){
-			AgentFirmCapital capital = this.capitalFirmAgents.get(i);
-			total = total + capital.getEmployees().size();
-			acum = acum + (capital.getEmployees().size() * capital.getProductivityB());
-		}
-
-		response = acum / total;
-		return response;
-	}
-
-	public float consumerEMP(){
-		float response = 0F;
-
-		float total = 0F;
 		for(int i = 0; i < this.consumerFirmAgents.size(); i++){
-			AgentFirmConsumer consumer = this.consumerFirmAgents.get(i);
-			total = total + consumer.getEmployees().size();
+			response = response + this.consumerFirmAgents.get(i).getMarketShareCycle();
 		}
-
-		response =  total;
 		return response;
 	}
 
-	public float capitalEMP(){
-		float response = 0F;
 
-		float total = 0F;
-		for(int i = 0; i < this.capitalFirmAgents.size(); i++){
-			AgentFirmCapital capital = this.capitalFirmAgents.get(i);
-			total = total + capital.getEmployees().size();
-		}
-
-		response = total;
-		return response;
-	}
-
-	public float ipc(){
-		float response = 0F;
-
+		
+	public float averageProductivityAConsumer(){
 		float acum = 0F;
+		float average = 0F;
 		for(int i = 0; i < this.consumerFirmAgents.size(); i++){
-			AgentFirmConsumer consumer = this.consumerFirmAgents.get(i);
-
-			acum = acum + (consumer.getMarketShareCycle() * consumer.getPrice());
+			AgentFirmConsumer agentFirm = this.consumerFirmAgents.get(i);
+			acum = acum + agentFirm.getMachinesProductivityAverage();
 		}
-
-		response = acum / this.marketShareSumGet();
-		this.ipcCycle = response;
-		return response;
+		average = acum / this.consumerFirmAgents.size();
+		return average;
 	}
 
-	public float prodAB(){
-		float response = 0F;
 
-		response = (this.consumerEMP() * this.averageProdAEMP() + this.capitalEMP() * this.averageProdBEMP())/(this.consumerEMP() + this.capitalEMP());
-		this.prodABCycle = response;
-		return response;
-	}
 	
 	public String getProductivitySum(){
 		StringBuilder response = new StringBuilder();
@@ -980,4 +1005,6 @@ public class ModelWorld extends engine.entities.World {
 		response.append("}");
 		return response.toString();
 	}
+	
+
 }

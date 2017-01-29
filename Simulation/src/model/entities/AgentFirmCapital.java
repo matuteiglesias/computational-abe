@@ -28,30 +28,6 @@ public class AgentFirmCapital extends AgentFirm {
 
 	private float productivityB;
 	
-//	private Map<ProductivityEnum, Integer> productivityVector = new HashMap<ProductivityEnum, Integer>();
-//	
-//	public enum ProductivityEnum{
-////		NO10,
-//		NO01,
-//		IN100,
-////		IN010,
-//		IN001,
-//		IM100,
-////		IM010,
-//		IM001
-//	}
-//	
-//	public AgentFirmCapital(){
-////		productivityVector.put(ProductivityEnum.NO10, 0);
-//		productivityVector.put(ProductivityEnum.NO01, 0);
-//		productivityVector.put(ProductivityEnum.IN100, 0);
-////		productivityVector.put(ProductivityEnum.IN010, 0);
-//		productivityVector.put(ProductivityEnum.IN001, 0);
-//		productivityVector.put(ProductivityEnum.IM100, 0);
-////		productivityVector.put(ProductivityEnum.IM010, 0);
-//		productivityVector.put(ProductivityEnum.IM001, 0);
-//
-//	}
 
 	/********/
 
@@ -103,61 +79,94 @@ public class AgentFirmCapital extends AgentFirm {
 		this.productivityB = productivityB;
 	}
 
-	public void runResearch(){
-
-		GoodCapital newCapital = null;
-
-		boolean haveToCreateNewCapital = false;
-
-		if(haveToCreateNewCapital){
-			newCapital = new GoodCapital();
-			this.capitalGoods.add(newCapital);                                     
-		}
-
+	public float getLiquidAssets() {
+		return liquidAssets;
 	}
 
-	public List<BrochureDTO> brochuresGet(){
+	public void setLiquidAssets(double d) {
+		this.liquidAssets = (float) d;
+	}
+	
+	
 
-		List<BrochureDTO> response = new ArrayList<BrochureDTO>();
 
-		if(this.world.getEmployees(1).size() > 0){
-			int max = this.getMaxQForCycle() * 5;
-			int act = this.requestOrders.size();
+	
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
+	
+	@Override
+	public AgentDTO runCycle() {
 
-			if(act <= max){
-				for(int i = 0; i < this.consumers.size(); i++){
-					AgentFirmConsumer consumer = this.consumers.get(i);
-					BrochureDTO dto = new BrochureDTO();
-					dto.consumer = consumer;
-					dto.manufacturer = this;
-					dto.vintage = this.lastVintage;
-					response.add(dto);
-				}
+		this.runPayroll();
+		this.processEmployees();
+		this.researchCapitalGoodVintage();
 
-				for(int i = 0; i < this.world.getParameters().AGENT_FIRM_CAPITAL_BROCHURES; i++){
-					BrochureDTO dto = new BrochureDTO();
-					dto.manufacturer = this;
-					dto.vintage = this.lastVintage;
-					response.add(dto);
+		return null;
+
+	}
+	
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	
+	@Override
+	protected void processEmployees() {
+		int employeesGap = (int) Math.round(this.getRequestOrdersUnprocessed() / (2 * this.productivityB))-this.employees.size();		
+		if(employeesGap > 0){
+			//Contratar
+
+			List<AgentPerson> employees = this.world.getEmployees(employeesGap);
+
+			for(int i = 0; i < employees.size(); i++){
+				AgentPerson employee = employees.get(i);
+				employee.setEmployer(this);
+				this.employees.add(employee);
+			}
+		}else if(employeesGap < 0){
+			//Despedir
+			int pending = -employeesGap;
+			for(int i = 0; i < this.employees.size() && pending > 0; i++){
+				if(this.employees.size() > 1){
+					AgentPerson employee = this.employees.get(i);
+					employee.setEmployer(null);
+					this.employees.remove(i);
+					pending--;
 				}
 			}
 		}
+
+
+	}
+	
+	public int getRequestOrdersUnprocessed(){
+		int response = 0;
+
+		for(int i = 0; i < this.requestOrders.size(); i++){
+			AgentFirmCapitalOrderRequest order = this.requestOrders.get(i);
+
+			if(order.getStatus().equals(AgentFirmCapitalOrderRequest.Status.UNPROCESSED)){
+				response++;
+			}
+		}
 		return response;
-
 	}
 
-	public void runPromote(){
+	public int getRequestOrdersDelivered(){
+		int response = 0;
 
+		for(int i = 0; i < this.requestOrders.size(); i++){
+			AgentFirmCapitalOrderRequest order = this.requestOrders.get(i);
+
+			if(order.getStatus().equals(AgentFirmCapitalOrderRequest.Status.DELIVERED)){
+				response++;
+			}
+		}
+		return response;
 	}
-//
-//	public Map<ProductivityEnum, Integer> getProductivityVector() {
-//		return productivityVector;
-//	}
-//
-//	public void setProductivityVector(Map<ProductivityEnum, Integer> productivityVector) {
-//		this.productivityVector = productivityVector;
-//	}
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	
 	private void researchCapitalGoodVintage(){
 		//	//logger.info(this.id+" investment: "+this.getI());
 
@@ -256,58 +265,78 @@ public class AgentFirmCapital extends AgentFirm {
 		}
 	}
 
-	@Override
-	public AgentDTO runCycle() {
 
-		this.runPayroll();
-		this.processEmployees();
-		this.researchCapitalGoodVintage();
-
-		return null;
-
-	}
-
-	public void processPL(){
-
-		this.soldUnitsHistory.add(this.soldUnitsCycle);
-		this.salesHistory.add(this.salesCycle);
-		this.costHistory.add(this.costCycle);
-		this.fabricatedHistory.add(this.fabricatedCycle);
-
-		float totalCost = this.costCycle * this.fabricatedCycle;
-		float profit = this.salesCycle - totalCost;
-
-		this.profitHistory.add(profit);
-
-		if(profit > 0){
-			float taxes = profit * this.world.getParameters().AGENT_GOVERNMENT_FIRM_TAX;
-			this.liquidAssets = this.liquidAssets - taxes;
-			this.world.getGovernment().payFirmTax(taxes);
-			//			//logger.info("PAY TAXES");
+	public float getI(){
+		float response = 0F;
+//		Prueba
+		if(this.salesHistory.size() > 0){
+			int index = this.salesHistory.size()-1;
+			response = this.salesHistory.get(index) * this.world.getParameters().AGENT_FIRM_CAPITAL_RD_PROPENSITY;
+		}else{
+			response = 0;
 		}
+		return response;
+	}
+	
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	
+	public List<BrochureDTO> brochuresGet(){
 
-		this.fabricatedLastCycle = this.fabricatedCycle;
-		
-		this.soldUnitsCycle = 0;
-		this.salesCycle = 0;
-		this.costCycle = 0;
-		this.fabricatedCycle = 0;
+		List<BrochureDTO> response = new ArrayList<BrochureDTO>();
 
-		float NW = this.getLiquidAssets();
-		if(NW < 0){
-			//logger.info("CREANDO FIRM CAPITAL");
-			this.world.replaceCapitalFirm(this);
+		if(this.world.getEmployees(1).size() > 0){
+			int max = this.getMaxQForCycle() * 5;
+			int act = this.requestOrders.size();
+
+			if(act <= max){
+				for(int i = 0; i < this.consumers.size(); i++){
+					AgentFirmConsumer consumer = this.consumers.get(i);
+					BrochureDTO dto = new BrochureDTO();
+					dto.consumer = consumer;
+					dto.manufacturer = this;
+					dto.vintage = this.lastVintage;
+					response.add(dto);
+				}
+
+				for(int i = 0; i < this.world.getParameters().AGENT_FIRM_CAPITAL_BROCHURES; i++){
+					BrochureDTO dto = new BrochureDTO();
+					dto.manufacturer = this;
+					dto.vintage = this.lastVintage;
+					response.add(dto);
+				}
+			}
 		}
+		return response;
 
 	}
-	@Override
-	public String getCode() {
-		return "CF-"+String.valueOf(this.id);
+	
+	public int getMaxQForCycle(){
+		int quantity = 0;
+
+		quantity = (int) Math.floor(this.productivityB * this.employees.size());
+
+		return quantity;
 	}
 
+	public void runPromote(){
 
+	}
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//SECOND ITERATION//
 
+//	for(int i = 0; i < size(); i++){
+//	requestOrdersProcess();
+//	processPL();
+//	if(parameters.PRINT_DEBUG){
+//	}
+//}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
+	
 	public void requestOrdersProcess(){
 
 		int quantity = this.getMaxQForCycle();
@@ -357,14 +386,7 @@ public class AgentFirmCapital extends AgentFirm {
 			}
 		}
 	}
-
-	public int getMaxQForCycle(){
-		int quantity = 0;
-
-		quantity = (int) Math.floor(this.productivityB * this.employees.size());
-
-		return quantity;
-	}
+	
 	private boolean isCustomer(AgentFirmConsumer consumer){
 		boolean exists = false;
 
@@ -377,6 +399,64 @@ public class AgentFirmCapital extends AgentFirm {
 		}
 		return exists;
 	}
+	
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
+	
+	public void processPL(){
+
+		this.soldUnitsHistory.add(this.soldUnitsCycle);
+		this.salesHistory.add(this.salesCycle);
+		this.costHistory.add(this.costCycle);
+		this.fabricatedHistory.add(this.fabricatedCycle);
+
+		float profit = this.salesCycle - this.costCycle;
+
+		this.profitHistory.add(profit);
+
+		if(profit > 0){
+			float taxes = profit * this.world.getParameters().AGENT_GOVERNMENT_FIRM_TAX;
+			this.liquidAssets = this.liquidAssets - taxes;
+			this.world.getGovernment().payFirmTax(taxes);
+			//			//logger.info("PAY TAXES");
+		}
+
+		this.fabricatedLastCycle = this.fabricatedCycle;
+		
+		this.soldUnitsCycle = 0;
+		this.salesCycle = 0;
+		this.costCycle = 0;
+		this.fabricatedCycle = 0;
+
+		float NW = this.getLiquidAssets();
+		if(NW < 0){
+			//logger.info("CREANDO FIRM CAPITAL");
+			this.world.replaceCapitalFirm(this);
+		}
+
+	}
+
+
+	public void runResearch(){
+
+		GoodCapital newCapital = null;
+
+		boolean haveToCreateNewCapital = false;
+
+		if(haveToCreateNewCapital){
+			newCapital = new GoodCapital();
+			this.capitalGoods.add(newCapital);                                     
+		}
+
+	}
+
+
+	@Override
+	public String getCode() {
+		return "CF-"+String.valueOf(this.id);
+	}
+	
+	
 	public void requestOrderCreate(OrderRequestDTO request){
 		AgentFirmCapitalOrderRequest order = new AgentFirmCapitalOrderRequest();
 		order.setConsumer(request.consumer);
@@ -395,90 +475,4 @@ public class AgentFirmCapital extends AgentFirm {
 		this.liquidAssets = this.liquidAssets  + earnings;
 	}
 
-	public int getRequestOrdersUnprocessed(){
-		int response = 0;
-
-		for(int i = 0; i < this.requestOrders.size(); i++){
-			AgentFirmCapitalOrderRequest order = this.requestOrders.get(i);
-
-			if(order.getStatus().equals(AgentFirmCapitalOrderRequest.Status.UNPROCESSED)){
-				response++;
-			}
-		}
-		return response;
-	}
-
-	public int getRequestOrdersDelivered(){
-		int response = 0;
-
-		for(int i = 0; i < this.requestOrders.size(); i++){
-			AgentFirmCapitalOrderRequest order = this.requestOrders.get(i);
-
-			if(order.getStatus().equals(AgentFirmCapitalOrderRequest.Status.DELIVERED)){
-				response++;
-			}
-		}
-		return response;
-	}
-
-	@Override
-	protected void processEmployees() {
-		int employeesGap = (int) Math.round(this.getRequestOrdersUnprocessed() / (2 * this.productivityB))-this.employees.size();		
-		if(employeesGap > 0){
-			//Contratar
-
-			List<AgentPerson> employees = this.world.getEmployees(employeesGap);
-
-			for(int i = 0; i < employees.size(); i++){
-				AgentPerson employee = employees.get(i);
-				employee.setEmployer(this);
-				this.employees.add(employee);
-			}
-		}else if(employeesGap < 0){
-			//Despedir
-			int pending = -employeesGap;
-			for(int i = 0; i < this.employees.size() && pending > 0; i++){
-				if(this.employees.size() > 1){
-					AgentPerson employee = this.employees.get(i);
-					employee.setEmployer(null);
-					this.employees.remove(i);
-					pending--;
-				}
-			}
-		}
-
-
-	}
-	public float getI(){
-		float response = 0F;
-//		Prueba
-		if(this.salesHistory.size() > 0){
-			int index = this.salesHistory.size()-1;
-			response = this.salesHistory.get(index) * this.world.getParameters().AGENT_FIRM_CAPITAL_RD_PROPENSITY;
-		}else{
-			response = 0;
-		}
-		return response;
-	}
-	
-//	public float getSalesCycle(){
-//		float response = 0F;
-////		Prueba
-//		if(this.salesHistory.size() > 0){
-//			int index = this.salesHistory.size()-1;
-//			response = this.salesHistory.get(index);
-//		}else{
-//			response = 0;
-//		}
-//		return response;
-//	}
-
-
-	public float getLiquidAssets() {
-		return liquidAssets;
-	}
-
-	public void setLiquidAssets(double d) {
-		this.liquidAssets = (float) d;
-	}
 }

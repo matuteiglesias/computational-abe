@@ -118,7 +118,6 @@ public abstract class AgentFirm extends Agent {
 	}
 
 	public void runPayroll(){
-	
 		for(int i = 0; i < this.employees.size(); i++){
 			
 			AgentPerson person = this.employees.get(i);
@@ -130,12 +129,15 @@ public abstract class AgentFirm extends Agent {
 				this.liquidAssets = this.liquidAssets - salaryGross;
 				person.receiveWage(salaryNet);
 				this.world.getGovernment().payEmployeeTax(taxes);
+				
+				
 			}catch(Exception e){
 				e.printStackTrace();
 			}
 		}
+		this.costCycle = this.employees.size() * this.world.getWageCycle();
 	}
-	
+		
 	protected abstract void processEmployees();
 
 	public int fabricatedTotal(){		

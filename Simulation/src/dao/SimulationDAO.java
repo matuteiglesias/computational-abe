@@ -10,6 +10,7 @@ import java.util.Calendar;
 import java.util.logging.Logger;
 
 import model.world.ModelWorld;
+import model.world.ModelWorld.ProductivityEnum;
 
 public class SimulationDAO {
 	private static final Logger logger = Logger.getLogger( SimulationDAO.class.getName() );
@@ -321,5 +322,6 @@ public class SimulationDAO {
 		}
 	}
 	
+
 	
 }
