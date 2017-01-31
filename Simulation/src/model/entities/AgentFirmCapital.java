@@ -371,15 +371,19 @@ public class AgentFirmCapital extends AgentFirm {
 
 				//				float earnings = order.getConsumer().receiveGoodCapital(order);
 				order.getConsumer().receiveGoodCapital(order);
-				float cost = this.world.getWageCycle() / this.productivityB;
-				//
-				this.costCycle = this.costCycle + cost;
+				
+				//COST SHOULD NOT BE DEDUCTED HERE, BUT ONLY THROUGH WAGE PAYMENT!!
+//				float cost = this.world.getWageCycle() / this.productivityB;
+//				//
+//				this.costCycle = this.costCycle + cost;
+				
+				
 				//				this.salesCycle = this.salesCycle + earnings;
 				//				this.soldUnitsCycle++;
 				this.fabricatedCycle++;
 
 				//				float cashflow = earnings - cost;
-				this.liquidAssets = this.liquidAssets  - cost;
+//				this.liquidAssets = this.liquidAssets  - cost;
 				order.setStatus(AgentFirmCapitalOrderRequest.Status.DELIVERED);
 
 				processedOrders++;

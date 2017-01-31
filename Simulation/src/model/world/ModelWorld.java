@@ -305,7 +305,6 @@ public class ModelWorld extends engine.entities.World {
 		/*** BEGIN WORLD STARTUP ****/
 		for(int i = 0; i < parameters.AGENT_FIRM_CAPITAL_Q; i++){
 			AgentFirmCapital agentCapital = this.addAgentFirmCapital();
-			//			agentCapital.setWage(Parameters.AGENT_FIRM_WAGE);
 			agentCapital.setLiquidAssets(getCapitalFirmNW()*(0.5 + Math.random()));
 			agentCapital.setProductivityB(this.getGoodCapitalProductivityB());
 			GoodCapitalVintage vintage = new GoodCapitalVintage();
@@ -319,7 +318,7 @@ public class ModelWorld extends engine.entities.World {
 		for(int i = 0; i < parameters.AGENT_FIRM_CONSUMER_Q; i++){
 			AgentFirmConsumer agentConsumer = this.addAgentFirmConsumer();
 			//			agentConsumer.setWage(Parameters.AGENT_FIRM_WAGE);
-			agentConsumer.setLiquidAssets(getConsumerFirmNW()*(0.75 + 0.5*Math.random()));
+			agentConsumer.setLiquidAssets(getConsumerFirmNW()*(0.5 + Math.random()));
 		}
 
 		for(int i = 0; i < parameters.AGENT_PERSON; i++){
@@ -686,17 +685,18 @@ public class ModelWorld extends engine.entities.World {
 
 		return acum;
 	}
-	
-	private void updateAverageCompetitivity(){
-		float acum = 0F;
 
-		for(int i = 0; i < this.consumerFirmAgents.size(); i++){
-			acum = acum + this.consumerFirmAgents.get(i).getCompetitivity();
+	private float consumptionUpdate(){
+		float response = 0F;
+		for(int i = 0; i < this.personAgents.size(); i++){
+			response = response + this.personAgents.get(i).getLiquidAssets();
 		}
-		float average = acum / this.consumerFirmAgents.size();
-		this.competitivityAverageCycle = average;
-		this.competitivityAverageHistory.add(average);
+		this.consumptionCycle = response;
+		this.consumptionHistory.add(response);
+		return response;
 	}
+
+	
 
 	private void sellConsumerGoods(){
 		float peopleLiquidAssets = this.consumptionCycle;
@@ -729,18 +729,18 @@ public class ModelWorld extends engine.entities.World {
 		}
 	}
 
+	
+	private void updateAverageCompetitivity(){
+		float acum = 0F;
 
-
-	private float consumptionUpdate(){
-		float response = 0F;
-		for(int i = 0; i < this.personAgents.size(); i++){
-			response = response + this.personAgents.get(i).getLiquidAssets();
+		for(int i = 0; i < this.consumerFirmAgents.size(); i++){
+			acum = acum + this.consumerFirmAgents.get(i).getCompetitivity();
 		}
-		this.consumptionCycle = response;
-		this.consumptionHistory.add(response);
-		return response;
+		float average = acum / this.consumerFirmAgents.size();
+		this.competitivityAverageCycle = average;
+		this.competitivityAverageHistory.add(average);
 	}
-
+	
 	private void updateWage(){
 		if(this.cycle == 1)
 			return;
@@ -918,8 +918,6 @@ public class ModelWorld extends engine.entities.World {
 			AgentPerson employee = employees.get(0);
 			employee.setEmployer(capitalNew);
 			capitalNew.getEmployees().add(employee);
-
-
 		}
 	}
 	
