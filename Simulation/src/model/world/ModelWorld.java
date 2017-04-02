@@ -3,6 +3,8 @@ package model.world;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -20,7 +22,6 @@ import model.entities.GoodCapital;
 import model.entities.GoodCapitalVintage;
 import model.entities.GoodConsumer;
 import model.parameters.ModelParametersSimulation;
-import model.world.ModelWorld.ProductivityEnum;
 
 public class ModelWorld extends engine.entities.World {
 	private static final Logger logger = Logger.getLogger( ModelWorld.class.getName() + " Model" );
@@ -311,6 +312,7 @@ public class ModelWorld extends engine.entities.World {
 
 			vintage.setPrice((this.getWageCycle() / agentCapital.getProductivityB()) * (1 + parameters.AGENT_FIRM_CAPITAL_MARGIN));
 			vintage.setProductivityA(this.getGoodCapitalVintageProductivityA());
+			vintage.setManufacturer(agentCapital);
 			agentCapital.setLastVintage(vintage);
 			agentCapital.getCapitalGoodVintage().add(vintage);
 		}
@@ -395,6 +397,20 @@ public class ModelWorld extends engine.entities.World {
 
 	public void employPeople(){
 
+		//COMMENTED 25-02-17
+		//START 05-02-17
+//		int personPerArgentFirm = (int) Math.floor(this.personAgents.size() / this.firmAgents.size());
+//		Iterator<AgentPerson> people = new HashSet<AgentPerson>(this.personAgents).iterator();
+//		
+//		for(int i = 0; i < this.firmAgents.size(); i++ ){
+//			AgentFirm firm = this.firmAgents.get(i);
+//			for(int j = 0; j < personPerArgentFirm && people.hasNext(); j++){
+//				firm.getEmployees().add(people.next());
+//			}
+//		}
+		//END 05-02-17
+		
+		//COMMENTED 05-02-17
 		List<AgentFirm> listFirm = new ArrayList<AgentFirm>(this.firmAgents);
 		Collections.shuffle(listFirm);
 
@@ -431,6 +447,9 @@ public class ModelWorld extends engine.entities.World {
 				int index = (int)(Math.random() * m);
 				consumer = this.consumerFirmAgents.get(index);
 			}
+			 
+//			logger.info("Brochure received by "+consumer.getId());
+
 
 			consumer.getBrochures().add(dto);
 		}
@@ -451,7 +470,11 @@ public class ModelWorld extends engine.entities.World {
 		productivityVector.put(ProductivityEnum.IM001, 0);
 		
 		ModelWorldCycle worldCycle = new ModelWorldCycle();
-		//		logger.info("RUNNING CYCLE "+this.cycle);
+		
+		if(parameters.PRINT_DEBUG){
+			logger.info("RUNNING CYCLE "+this.cycle);
+		}
+		
 		for(int i = 0; i < this.agents.size(); i++){
 			Agent agent = this.agents.get(i);
 			//			logger.info("RUNNING CYCLE FOR AGENT "+agent.getCode());
@@ -566,12 +589,15 @@ public class ModelWorld extends engine.entities.World {
 		this.employedHistory.add((float)(employed / (float) this.personAgents.size()));
 		this.unemployedHistory.add((float)(unemployed / (float) this.personAgents.size()));
 
+		this.ipc();
 
 		//Start 1-10-16
-		this.ipc();
 		this.prodAB();
 		this.updateWage();
 		this.wageHistory.add(this.wageCycle);
+		
+
+		
 		// Es necesario que updateWage se corra antes de agregar otro elemento al history de IPC
 		this.ipcHistory.add(this.ipcCycle);
 		this.ipcCycle = 0;
@@ -591,15 +617,31 @@ public class ModelWorld extends engine.entities.World {
 	
 	public float ipc(){
 		float response = 0F;
-
+		
+		float acumSalesNom = 0F;
+		float acumSalesUni = 0F;
+		for(int i = 0; i < this.consumerFirmAgents.size(); i++){
+			AgentFirmConsumer consumer = this.consumerFirmAgents.get(i);
+			acumSalesNom = acumSalesNom + consumer.getSalesCycle();
+			acumSalesUni = acumSalesUni + consumer.soldUnitsCycle();
+		}
+		
 		float acum = 0F;
 		for(int i = 0; i < this.consumerFirmAgents.size(); i++){
 			AgentFirmConsumer consumer = this.consumerFirmAgents.get(i);
-
 			acum = acum + (consumer.getMarketShareCycle() * consumer.getPrice());
 		}
 
 		response = acum / this.marketShareSumGet();
+
+		
+//		if(acumSalesUni > 10){
+//			response = acumSalesNom / acumSalesUni;
+//		}else{
+//			response = acum / this.marketShareSumGet();
+//		}
+//		logger.info("Sales Nom = "+acumSalesNom+" Sales Unit = "+acumSalesUni+" MSmethod="+acum+" Result ="+response);
+
 		this.ipcCycle = response;
 		return response;
 	}
@@ -783,6 +825,17 @@ public class ModelWorld extends engine.entities.World {
 		average = acum / this.capitalFirmAgents.size();
 		return average;
 	}
+	
+	public float averageScore(){
+		float acum = 0F;
+		float average = 0F;
+		for(int i = 0; i < this.capitalFirmAgents.size(); i++){
+			AgentFirmCapital agentFirm = this.capitalFirmAgents.get(i);
+			acum = acum + agentFirm.getLastVintage().score();
+		}
+		average = acum / this.capitalFirmAgents.size();
+		return average;
+	}
 
 
 
@@ -803,6 +856,8 @@ public class ModelWorld extends engine.entities.World {
 		return acum;
 	}
 
+
+	
 	public float salesCapitalCycleTotalNominal(){
 		float acum = 0;
 		for(int i = 0; i < this.capitalFirmAgents.size(); i++){
@@ -1002,6 +1057,33 @@ public class ModelWorld extends engine.entities.World {
 		response.append(this.productivityVector.get(ProductivityEnum.IM001));
 		response.append("}");
 		return response.toString();
+	}
+
+	public float getPriceofBestVintage(){
+//		logger.info("Init methd ");
+
+		GoodCapitalVintage vintage = this.capitalFirmAgents.get(0).getLastVintage();
+//		logger.info("Init vintage ");
+
+		float max = vintage.score();
+		
+//		logger.info("Init score "+max);
+		
+		float current = 0;
+		for(int i = 1; i < this.capitalFirmAgents.size(); i++){
+			AgentFirmCapital agent = this.capitalFirmAgents.get(i);
+			current = agent.getLastVintage().score();
+			if(current > max){
+				vintage = agent.getLastVintage();
+//				logger.info("Upd score "+current);
+
+			}else{
+			}
+		}
+		logger.info("Best machine price "+vintage.getPrice());
+		return vintage.getPrice();
+		
+
 	}
 	
 

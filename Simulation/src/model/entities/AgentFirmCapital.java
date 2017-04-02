@@ -22,7 +22,7 @@ public class AgentFirmCapital extends AgentFirm {
 
 	private List<AgentFirmConsumer> consumers = new ArrayList<AgentFirmConsumer>();
 
-	private GoodCapitalVintage lastVintage = new GoodCapitalVintage();
+	private GoodCapitalVintage lastVintage = new GoodCapitalVintage(this);
 
 	private List<AgentFirmCapitalOrderRequest> requestOrders = new ArrayList<AgentFirmCapitalOrderRequest>();
 
@@ -235,6 +235,7 @@ public class AgentFirmCapital extends AgentFirm {
 				world.getProductivityVector().put(ModelWorld.ProductivityEnum.IN001, actualValue + 1);
 				
 				GoodCapitalVintage vintage = new GoodCapitalVintage();
+				vintage.setManufacturer(this);
 				vintage.setProductivityA(innovA);
 				this.productivityB = innovB;
 				float cost = this.world.getWageCycle() / this.productivityB;
@@ -286,26 +287,43 @@ public class AgentFirmCapital extends AgentFirm {
 		List<BrochureDTO> response = new ArrayList<BrochureDTO>();
 
 		if(this.world.getEmployees(1).size() > 0){
-			int max = this.getMaxQForCycle() * 5;
-			int act = this.requestOrders.size();
-
-			if(act <= max){
-				for(int i = 0; i < this.consumers.size(); i++){
-					AgentFirmConsumer consumer = this.consumers.get(i);
-					BrochureDTO dto = new BrochureDTO();
-					dto.consumer = consumer;
-					dto.manufacturer = this;
-					dto.vintage = this.lastVintage;
-					response.add(dto);
-				}
-
-				for(int i = 0; i < this.world.getParameters().AGENT_FIRM_CAPITAL_BROCHURES; i++){
-					BrochureDTO dto = new BrochureDTO();
-					dto.manufacturer = this;
-					dto.vintage = this.lastVintage;
-					response.add(dto);
-				}
+			
+			
+			//START 05-02-17
+			for(int i=0;i< this.world.getConsumerFirmAgents().size();i++){
+				AgentFirmConsumer consumer = this.world.getConsumerFirmAgents().get(i);
+				BrochureDTO dto = new BrochureDTO();
+				dto.consumer = consumer;
+				dto.manufacturer = this;
+				dto.vintage = this.lastVintage;
+				response.add(dto);
 			}
+			//END 05-02-17
+			
+			//COMMENTED 05-02-17
+//			int max = this.getMaxQForCycle() * 5;
+//			int act = this.requestOrders.size();
+//
+//			if(act <= max){
+//				for(int i = 0; i < this.consumers.size(); i++){
+//					AgentFirmConsumer consumer = this.consumers.get(i);
+//					BrochureDTO dto = new BrochureDTO();
+//					dto.consumer = consumer;
+//					dto.manufacturer = this;
+//					dto.vintage = this.lastVintage;
+//					response.add(dto);
+//				}
+//
+//				for(int i = 0; i < this.world.getParameters().AGENT_FIRM_CAPITAL_BROCHURES; i++){
+//					BrochureDTO dto = new BrochureDTO();
+//					dto.manufacturer = this;
+//					dto.vintage = this.lastVintage;
+//					response.add(dto);
+//				}
+//				
+//			
+//			}
+			//COMMENTED 05-02-17			
 		}
 		return response;
 
@@ -314,7 +332,7 @@ public class AgentFirmCapital extends AgentFirm {
 	public int getMaxQForCycle(){
 		int quantity = 0;
 
-		quantity = (int) Math.floor(this.productivityB * this.employees.size());
+		quantity = (int) Math.ceil(this.productivityB * this.employees.size());
 
 		return quantity;
 	}
@@ -368,8 +386,10 @@ public class AgentFirmCapital extends AgentFirm {
 
 				// ENVIA LA MAQUINA AL CLIENTE
 				this.requestOrders.remove(order);
+				
+//				logger.info("Machine sent to client");
 
-				//				float earnings = order.getConsumer().receiveGoodCapital(order);
+//								float earnings = order/.getConsumer().receiveGoodCapital(order);
 				order.getConsumer().receiveGoodCapital(order);
 				
 				//COST SHOULD NOT BE DEDUCTED HERE, BUT ONLY THROUGH WAGE PAYMENT!!
@@ -465,10 +485,13 @@ public class AgentFirmCapital extends AgentFirm {
 		AgentFirmCapitalOrderRequest order = new AgentFirmCapitalOrderRequest();
 		order.setConsumer(request.consumer);
 		order.setGoodCapitalVintage(request.vintage);
-		//logger.info("Vintage Requested to "+this.id);
+//		logger.info("Vintage Requested to "+this.id);
 
-		if(request.toReplace != null)
+		if(request.toReplace != null){
 			order.setToReplace(request.toReplace);
+//			logger.info("rq to "+this.id+" was to replace");
+		}
+		
 		this.requestOrders.add(order);
 
 

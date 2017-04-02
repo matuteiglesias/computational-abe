@@ -9,4 +9,8 @@ public class BrochureDTO {
 	public AgentFirmConsumer consumer;
 	public GoodCapitalVintage vintage;
 	
+	
+	public BrochureDTO(){
+		
+	}
 }

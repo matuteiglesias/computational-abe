@@ -1,5 +1,6 @@
 package model.entities;
 
+import java.security.Policy.Parameters;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -207,7 +208,8 @@ public class AgentFirmConsumer extends AgentFirm {
 	@Override
 	protected void processEmployees() {
 
-		int employeesGap = (int) Math.round((Math.min(this.getQ0(), this.getQk()) - this.getQl()) / this.getMachinesProductivityAverage());
+		int employeesGap = (int) Math.round((this.getQ0() - this.getQl()) / this.getMachinesProductivityTotal());
+		
 
 		if(employeesGap > 0){//employeesGap is positive when people are missing 
 			//Contratar
@@ -229,6 +231,8 @@ public class AgentFirmConsumer extends AgentFirm {
 			}
 		}
 
+		
+		
 
 	}
 
@@ -237,7 +241,9 @@ public class AgentFirmConsumer extends AgentFirm {
 
 		int index = this.demandUnitsHistory.size();
 		index--;
-
+		if(index == 0){
+			response = this.world.getParameters().WORLD_WAGE * this.world.getParameters().AGENT_PERSON / this.world.getParameters().AGENT_FIRM_CONSUMER_Q;
+		}
 		if(index == 1){
 			response = this.demandUnitsHistory.get(index);
 		}else if(index > 1){
@@ -247,7 +253,7 @@ public class AgentFirmConsumer extends AgentFirm {
 		}
 
 
-		return response;
+		return Math.max(response, 0);
 	}
 	
 	public List<GoodConsumer> getGoodsConsumer(int quantity){
@@ -277,13 +283,33 @@ public class AgentFirmConsumer extends AgentFirm {
 		float acum = 0F;
 		for(int i = 0; i < this.machines.size(); i++){
 			acum = acum + this.machines.get(i).getGoodCapitalVintage().getPrice();
+			
 		}
 
 		return acum;
 	}
 	
 	public float getQl(){
-		return this.getMachinesProductivityAverage() * this.employees.size();
+		return this.getMachinesProductivityTotal() * this.employees.size();
+	}
+	
+	public float getMachinesScoreAverage(){
+		float average = 0F;
+		float acum = 0F;
+		int quantity = this.machines.size();
+
+		if(quantity > 0){
+			for(int i = 0; i < this.machines.size(); i++){
+				acum = acum + this.machines.get(i).getGoodCapitalVintage().score();
+			}
+
+			average = (acum / quantity);
+
+		}else{
+			average = this.world.averageScore();
+		}
+
+		return average;
 	}
 	
 	public float getMachinesProductivityAverage(){
@@ -304,45 +330,65 @@ public class AgentFirmConsumer extends AgentFirm {
 
 		return average;
 	}
+	
+	public float getMachinesProductivityTotal(){
+		float acum = 0F;
+		int quantity = this.machines.size();
+		if(quantity > 0){
+			for(int i = 0; i < this.machines.size(); i++){
+				acum = acum + this.machines.get(i).getGoodCapitalVintage().getProductivityA();
+			}
+		}else{
+			acum = this.world.averageProductivityACapital();
+		}
+		return acum;
+	}
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 	
 	private void brochuresProcess(){
 
-		//IF NO BROCHURES, FINISH.
 		if(this.brochures.size() < 1)
-			return;		
-		
-		
+			return;
+
+		//logger.info("PROCESSING BROCHURES");
 		// NEW PROVIDERS
 		float investExpansion = 0F;
 
 		if(true){
-			//logger.info("PROCESSING BROCHURES NEW PROVIDER");
+			//logger.info("FirmConsumer Brochure NewProvider");
 			BrochureDTO brochure = this.goodCapitalOptimalNewProviders();
+
 			if(brochure != null){
 				float investment = 0F;
 
 				if(this.machines.size() > 0){
+//					logger.info("Machines size = "+this.machines.size());
 					investment = this.getI();
+
 				}else{
 					investment = brochure.vintage.getPrice();
 				}
 				//logger.info("ID "+this.id+" Investment "+investment);
-				//logger.info("Prod avg "+this.getMachinesProductivityAverage()+" and prodA is "+brochure.vintage.getProductivityA());
+//				logger.info("Score avg "+this.getMachinesScoreAverage()+" and Score is "+brochure.vintage.score());
+				
+				
+//				float score = brochure.vintage.score();
+				float score = brochure.vintage.getProductivityA();
+//				if(score >= this.getMachinesScoreAverage()){
+				if(score >= this.getMachinesProductivityAverage()){
 
-				if(brochure.vintage.getProductivityA() >= 
-						this.getMachinesProductivityAverage()){
 
-					//logger.info("FirmConsumer Brochure NewProvider Investment");
+//					logger.info("FirmConsumer Brochure NewProvider Investment");
 					while(investment >= brochure.vintage.getPrice()){
 						//logger.info("ID "+this.id+" Iteration "+p++);
 						//logger.info("BUYING NEW MACHINE FROM NEW PROVIDER "+investment+" price "+brochure.vintage.getPrice());
 						OrderRequestDTO request = new OrderRequestDTO();
 						request.consumer = this;
 						request.vintage = brochure.vintage;
-						//logger.info("FirmConsumer Brochure Create Order");
+//						logger.info("FirmConsumer Brochure Create Order");
 						brochure.manufacturer.requestOrderCreate(request);
 						//logger.info("FirmConsumer Brochure Rest Investment");
 						investment = investment - brochure.vintage.getPrice();
@@ -386,7 +432,7 @@ public class AgentFirmConsumer extends AgentFirm {
 						request.toReplace = existingGood;
 						brochure.manufacturer.requestOrderCreate(request);
 						investReplace = investReplace + brochure.vintage.getPrice();
-
+						
 					}
 
 				}
@@ -401,7 +447,7 @@ public class AgentFirmConsumer extends AgentFirm {
 		}
 		this.brochures = new ArrayList<BrochureDTO>();
 
-	}
+}
 	
 //	private BrochureDTO goodCapitalMostProductiveNewProviders(){
 //		float productivity = Float.MIN_VALUE;
@@ -420,40 +466,6 @@ public class AgentFirmConsumer extends AgentFirm {
 //		return selected;
 //	}
 	
-	private BrochureDTO goodCapitalOptimalNewProviders(){
-		float score = Float.MIN_VALUE;
-		BrochureDTO selected = null;
-		for(int i = 0; i < this.brochures.size(); i++){
-			BrochureDTO brochure = this.brochures.get(i);
-			if(brochure.consumer == null){
-
-				if(brochure.vintage.getPrice() + this.world.getParameters().AGENT_FIRM_CONSUMER_PAYBACK_PERIOD * this.world.getWageCycle() / brochure.vintage.getProductivityA() 
-						> score){
-					selected = brochure;
-					score = brochure.vintage.getProductivityA();
-				}
-			}
-
-		}
-		return selected;
-	}
-	
-	public float getI(){
-		float response = 0F;
-		response = (int) Math.min(this.getQ0(),this.getQl()) - this.getMachinesCapital()*this.world.getParameters().AGENT_FIRM_CONSUMER_CAPITAL_INTENSITY;
-
-//		int i = world.getCycle()-2;
-//		if(i > 1 &&	world.getUnemployedHistory().get(i)*world.getPersonAgents().size() < 3){
-//			response = (int) this.employees.size() * this.getMachinesProductivityAverage() - this.getQk() / this.world.getParameters().AGENT_FIRM_CONSUMER_CAPITAL_INTENSITY;
-//		}else{
-//			response = (int) this.getQ0() * this.getPrice() - this.getQk() / this.world.getParameters().AGENT_FIRM_CONSUMER_CAPITAL_INTENSITY;
-//		}
-		
-		response = Math.max(response,0);
-		return response;
-	}
-	
-	
 	private List<BrochureDTO> goodCapitalFromProviders(){
 
 		List<BrochureDTO> response = new ArrayList<BrochureDTO>();
@@ -465,6 +477,82 @@ public class AgentFirmConsumer extends AgentFirm {
 		}
 		return response;
 	}
+	
+	private BrochureDTO goodCapitalOptimalNewProviders(){
+
+		float score = Float.MIN_VALUE;
+		
+		BrochureDTO selected = null;
+		for(int i = 0; i < this.brochures.size(); i++){
+//			logger.info("Loop for 1");
+
+			BrochureDTO brochure = this.brochures.get(i);
+//			if(brochure.vintage.score() > score){
+//				
+//				logger.info("Loop if 2");
+//				selected = brochure;
+//				score = brochure.vintage.score();
+//			}
+			
+			if(brochure.vintage.getProductivityA() > score){
+				
+//				logger.info("Loop if 2");
+				selected = brochure;
+				score = brochure.vintage.getProductivityA();
+			}
+			
+//			if(brochure.consumer == null){
+//				
+//				logger.info("Loop if 1");
+//				logger.info("is prod A ("+brochure.vintage.getProductivityA()+") > productivity? ("+productivity+")");
+//
+//				if(brochure.vintage.getProductivityA() > productivity){
+//					logger.info("Loop if 2");
+//
+//					selected = brochure;
+//					productivity = brochure.vintage.getProductivityA();
+//				}
+//			}
+
+		}
+		return selected;
+
+
+}
+	
+//			if(brochure.vintage.score() > score){
+//				logger.info("LOOP C");
+//				selected = brochure;
+//				score = brochure.vintage.score();
+//			}
+//			
+////			if(brochure.consumer == null){
+////				logger.info("LOOP B");
+////
+////			}
+//
+//		}
+//		return selected;
+//	}
+//	
+	public float getI(){
+		float response = 0F;
+		response = (int) Math.min(this.getQ0(),this.getQl()) - this.getMachinesCapital()*this.world.getParameters().AGENT_FIRM_CONSUMER_CAPITAL_INTENSITY;
+
+//		int i = world.getCycle()-2;
+//		if(i > 1 &&	world.getUnemployedHistory().get(i)*world.getPersonAgents().size() < 3){
+//			response = (int) this.employees.size() * this.getMachinesProductivityAverage() - this.getQk() / this.world.getParameters().AGENT_FIRM_CONSUMER_CAPITAL_INTENSITY;
+//		}else{
+//			response = (int) this.getQ0() * this.getPrice() - this.getQk() / this.world.getParameters().AGENT_FIRM_CONSUMER_CAPITAL_INTENSITY;
+//		}
+//		logger.info("Price of Best Vint = "+this.world.getPriceofBestVintage());
+//		response = Math.max(response,this.world.getPriceofBestVintage());
+		return Math.max(response,0);
+	}
+	
+	
+
+	
 	
 	private List<GoodCapital> goodCapitalsFromProvider(AgentFirmCapital provider){
 		List<GoodCapital> goods = new ArrayList<GoodCapital>();
@@ -487,7 +575,7 @@ public class AgentFirmConsumer extends AgentFirm {
 	}
 	
 	public float getCostUnit(){
-		return this.world.getWageCycle() / this.getMachinesProductivityAverage();
+		return this.world.getWageCycle() / this.getMachinesProductivityTotal();
 
 	}
 	
@@ -600,6 +688,8 @@ public class AgentFirmConsumer extends AgentFirm {
 
 		float salesproy = this.getSalesCycle();
 
+//		this.world.ipc();
+		
 		this.soldUnitsCycle = 0;
 		this.salesCycle = 0;
 		this.costCycle = 0;
@@ -631,7 +721,7 @@ public class AgentFirmConsumer extends AgentFirm {
 
 		float newMarketShare = Math.max(compareFirst,0);
 
-		//		//logger.info("COMP="+competitivity+" COMP_AVG="+competitivityAverage+" PSI="+psi+" COMPARE_FIRST="+compareFirst+" FINAL="+newMarketShare);
+		//logger.info("COMP="+competitivity+" COMP_AVG="+competitivityAverage+" PSI="+psi+" COMPARE_FIRST="+compareFirst+" FINAL="+newMarketShare);
 
 		this.marketShares.add(newMarketShare);
 		this.marketShareCycle = newMarketShare;
