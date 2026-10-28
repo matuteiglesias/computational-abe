@@ -1,0 +1,12 @@
+# NEVER import historical credentials or local state
+**/ConfigBD.txt
+**/*credentials*
+**/.env
+**/.env.*
+*.class
+*.log
+build/
+out/
+target/
+.gradle/
+artifacts/
