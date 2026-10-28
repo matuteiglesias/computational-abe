@@ -31,4 +31,4 @@ Historical credentials (ConfigBD.txt), historic test FirstExample.java, third-pa
 
 Config filenames are **candidates**, not evidence of executed experiments. Historical employeeGap, machine index, event ordering and other differences remain unresolved scientific questions; no K+S paper/model equivalence is implied.
 
-This repository has **no remote configured** and no automatic publication/push. Rights/attribution clearance is required before redistribution or derived executable historical code.
+GitHub remote: https://github.com/matuteiglesias/computational-abe (PUBLIC, default branch main as of 2026-10-28). The earlier public master at 31b7a719ce54f1388a10c1722c6fe0d15c35ebdc remains intact as a separate branch. Only the sanitized main source was pushed, without the private archive object history. Further releases, historical code reuse or derived executable publication require separate rights/attribution clearance and authorization; never push automatically.

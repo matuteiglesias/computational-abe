@@ -8,4 +8,4 @@ Do NOT read/import legacy ConfigBD.txt, private database credentials, unreviewed
 
 All new economic implementations, tested mechanisms, comparisons and K+S v2 work belong in ../computational-abe-research, on separate worktrees/branches with independent scientific review. Do not claim model/paper equivalence from passing software checks.
 
-No remote, push, merge, publication, data-rights approval or canonical science status promotion without explicit director authorization.
+GitHub origin is the PUBLIC repository matuteiglesias/computational-abe, with main as sanitized historical default and old master preserved. Director authorized the 2026-10-28 initial push; this is NOT standing authorization for later pushes, merges, data-rights approval, release or canonical scientific promotion.
